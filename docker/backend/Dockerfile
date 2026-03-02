@@ -1,16 +1,15 @@
-# docker/backend/Dockerfile (actualizado)
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Copiar archivos de dependencias
-COPY backend/package*.json ./
+# Copiar package.json (están en el mismo directorio que el Dockerfile)
+COPY package*.json ./
 
-# Instalar dependencias (usar npm install en desarrollo)
+# Instalar dependencias
 RUN npm install
 
-# Copiar código fuente
-COPY backend/ .
+# Copiar el resto del código fuente
+COPY . .
 
 # Exponer puerto
 EXPOSE 4000

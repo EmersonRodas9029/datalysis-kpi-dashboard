@@ -1,16 +1,15 @@
-# docker/frontend/Dockerfile (actualizado)
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Copiar archivos de dependencias
-COPY frontend/package*.json ./
+# Copiar package.json
+COPY package*.json ./
 
 # Instalar dependencias
 RUN npm install
 
-# Copiar código fuente
-COPY frontend/ .
+# Copiar el resto del código fuente
+COPY . .
 
 # Exponer puerto
 EXPOSE 3000

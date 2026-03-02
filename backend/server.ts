@@ -15,9 +15,9 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/api/kpis', (req, res) => {
-  res.json({ message: 'KPI endpoint - To be implemented' });
+  res.json({ message: 'KPI endpoint working' });
 });
 
 app.listen(port, () => {
-  console.log(`🚀 Backend running on http://localhost:${port}`);
+  console.log(`🚀 Backend running on port ${port}`);
 });
