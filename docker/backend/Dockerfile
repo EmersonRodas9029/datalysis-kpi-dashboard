@@ -1,4 +1,4 @@
-# commercial-kpi-dashboard/docker/backend/Dockerfile
+# docker/backend/Dockerfile (actualizado)
 FROM node:18-alpine
 
 WORKDIR /app
@@ -6,8 +6,8 @@ WORKDIR /app
 # Copiar archivos de dependencias
 COPY backend/package*.json ./
 
-# Instalar dependencias
-RUN npm ci
+# Instalar dependencias (usar npm install en desarrollo)
+RUN npm install
 
 # Copiar código fuente
 COPY backend/ .
