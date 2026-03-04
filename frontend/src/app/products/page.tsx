@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 
-export default function RankingsPage() {
+export default function ProductsPage() {
   const { filters, dateRange, updateDateRange } = useFilters();
   const [metric, setMetric] = useState<'gmv' | 'revenue'>('gmv');
   const [limit, setLimit] = useState(10);
@@ -25,9 +25,9 @@ export default function RankingsPage() {
     <DashboardLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold">Rankings de Productos</h1>
+          <h1 className="text-3xl font-bold">Análisis de Productos</h1>
           <p className="text-muted-foreground mt-2">
-            Top productos por GMV y Revenue
+            Desempeño detallado de productos y categorías
           </p>
         </div>
 
@@ -95,7 +95,7 @@ export default function RankingsPage() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left py-2">Producto</th>
+                        <th className="text-left py-2">Product ID</th>
                         <th className="text-left py-2">Categoría</th>
                         <th className="text-right py-2">GMV</th>
                         <th className="text-right py-2">Revenue</th>
@@ -106,9 +106,11 @@ export default function RankingsPage() {
                       {products?.map((product) => (
                         <tr key={product.productId} className="border-b">
                           <td className="py-2 font-mono text-sm">
-                            {product.productId.substring(0, 8)}...
+                            {product.productId.substring(0, 12)}...
                           </td>
-                          <td className="py-2">{product.productCategory}</td>
+                          <td className="py-2 capitalize">
+                            {product.productCategory.replace('_', ' ')}
+                          </td>
                           <td className="text-right py-2">{formatCurrency(product.gmv)}</td>
                           <td className="text-right py-2">{formatCurrency(product.revenue)}</td>
                           <td className="text-right py-2">{formatNumber(product.orders)}</td>

@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS gold.fact_sales (
     -- Metadata
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    -- Unique constraint para evitar duplicados (CORREGIDO: order_item_id en lugar de order_item_item)
+    -- Unique constraint para evitar duplicados
     UNIQUE(order_id, order_item_id)
 );
 
@@ -111,13 +111,13 @@ CREATE INDEX IF NOT EXISTS idx_dim_order_customer ON gold.dim_order(customer_id)
 CREATE INDEX IF NOT EXISTS idx_dim_order_purchase_date ON gold.dim_order(purchase_date_sk);
 CREATE INDEX IF NOT EXISTS idx_dim_order_status ON gold.dim_order(order_status);
 
--- Crear función para generar dimensión fecha
+-- Crear función para generar dimensión fecha (CORREGIDA)
 CREATE OR REPLACE FUNCTION gold.generate_date_dimension(start_date DATE, end_date DATE)
 RETURNS VOID AS $$
 DECLARE
-    current_date DATE := start_date;
+    curr_date DATE := start_date;
 BEGIN
-    WHILE current_date <= end_date LOOP
+    WHILE curr_date <= end_date LOOP
         INSERT INTO gold.dim_date (
             full_date,
             year,
@@ -129,19 +129,19 @@ BEGIN
             day_name,
             is_weekend
         ) VALUES (
-            current_date,
-            EXTRACT(YEAR FROM current_date),
-            EXTRACT(QUARTER FROM current_date),
-            EXTRACT(MONTH FROM current_date),
-            TO_CHAR(current_date, 'Month'),
-            EXTRACT(WEEK FROM current_date),
-            EXTRACT(DOW FROM current_date),
-            TO_CHAR(current_date, 'Day'),
-            EXTRACT(DOW FROM current_date) IN (0, 6)
+            curr_date,
+            EXTRACT(YEAR FROM curr_date),
+            EXTRACT(QUARTER FROM curr_date),
+            EXTRACT(MONTH FROM curr_date),
+            TO_CHAR(curr_date, 'Month'),
+            EXTRACT(WEEK FROM curr_date),
+            EXTRACT(DOW FROM curr_date),
+            TO_CHAR(curr_date, 'Day'),
+            EXTRACT(DOW FROM curr_date) IN (0, 6)
         )
         ON CONFLICT (full_date) DO NOTHING;
         
-        current_date := current_date + INTERVAL '1 day';
+        curr_date := curr_date + INTERVAL '1 day';
     END LOOP;
 END;
 $$ LANGUAGE plpgsql;
