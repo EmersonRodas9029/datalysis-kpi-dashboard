@@ -1,23 +1,38 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
 import dotenv from 'dotenv';
+import routes from './src/adapters/http/routes';
+import { errorHandler } from './src/adapters/middleware/validation.middleware';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 4000;
 
-app.use(cors());
+// Middleware
+app.use(helmet());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true,
+}));
 app.use(express.json());
+app.use(morgan('combined'));
 
-app.get('/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
-});
+// Rutas
+app.use('/api', routes);
 
-app.get('/api/kpis', (req, res) => {
-  res.json({ message: 'KPI endpoint working' });
+// Manejo de errores
+app.use(errorHandler);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found' });
 });
 
 app.listen(port, () => {
   console.log(`🚀 Backend running on port ${port}`);
+  console.log(`📊 API available at http://localhost:${port}/api`);
+  console.log(`🔍 Health check: http://localhost:${port}/api/health`);
 });

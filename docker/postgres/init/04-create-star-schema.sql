@@ -1,8 +1,11 @@
 -- Star Schema para análisis de ventas
--- Grano: 1 fila por item de orden
 
--- Crear schema gold si no existe
-CREATE SCHEMA IF NOT EXISTS gold;
+-- Limpiar datos existentes
+DROP TABLE IF EXISTS gold.fact_sales CASCADE;
+DROP TABLE IF EXISTS gold.dim_order CASCADE;
+DROP TABLE IF EXISTS gold.dim_product CASCADE;
+DROP TABLE IF EXISTS gold.dim_customer CASCADE;
+DROP TABLE IF EXISTS gold.dim_date CASCADE;
 
 -- 1. Dimensión Fecha (calendario)
 CREATE TABLE IF NOT EXISTS gold.dim_date (
@@ -49,6 +52,7 @@ CREATE TABLE IF NOT EXISTS gold.dim_product (
 CREATE TABLE IF NOT EXISTS gold.dim_order (
     order_sk SERIAL PRIMARY KEY,
     order_id VARCHAR(50) NOT NULL,
+    customer_id VARCHAR(50),
     order_status VARCHAR(50),
     order_purchase_timestamp TIMESTAMP,
     order_approved_at TIMESTAMP,
@@ -92,8 +96,8 @@ CREATE TABLE IF NOT EXISTS gold.fact_sales (
     -- Metadata
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    -- Unique constraint para evitar duplicados
-    UNIQUE(order_id, order_item_item)
+    -- Unique constraint para evitar duplicados (CORREGIDO: order_item_id en lugar de order_item_item)
+    UNIQUE(order_id, order_item_id)
 );
 
 -- Crear índices para performance en gold
@@ -103,6 +107,9 @@ CREATE INDEX IF NOT EXISTS idx_fact_sales_product ON gold.fact_sales(product_sk)
 CREATE INDEX IF NOT EXISTS idx_fact_sales_date ON gold.fact_sales(date_sk);
 CREATE INDEX IF NOT EXISTS idx_fact_sales_status ON gold.fact_sales(is_canceled, is_delivered);
 CREATE INDEX IF NOT EXISTS idx_fact_sales_payment ON gold.fact_sales(payment_value_allocated);
+CREATE INDEX IF NOT EXISTS idx_dim_order_customer ON gold.dim_order(customer_id);
+CREATE INDEX IF NOT EXISTS idx_dim_order_purchase_date ON gold.dim_order(purchase_date_sk);
+CREATE INDEX IF NOT EXISTS idx_dim_order_status ON gold.dim_order(order_status);
 
 -- Crear función para generar dimensión fecha
 CREATE OR REPLACE FUNCTION gold.generate_date_dimension(start_date DATE, end_date DATE)
@@ -138,9 +145,3 @@ BEGIN
     END LOOP;
 END;
 $$ LANGUAGE plpgsql;
-
--- Mensaje de confirmación
-DO $$
-BEGIN
-    RAISE NOTICE '✅ Star schema (gold) creado correctamente';
-END $$;
