@@ -9,6 +9,7 @@ import { useFilters } from '@/hooks/useFilters';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatNumber } from '@/lib/utils';
+import { Trophy, TrendingUp, DollarSign, Medal } from 'lucide-react';
 
 export default function RankingsPage() {
   const { filters, dateRange, updateDateRange } = useFilters();
@@ -21,13 +22,22 @@ export default function RankingsPage() {
     limit,
   });
 
+  const getMedalColor = (index: number) => {
+    switch(index) {
+      case 0: return 'text-yellow-500';
+      case 1: return 'text-gray-400';
+      case 2: return 'text-amber-600';
+      default: return 'text-gray-300';
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold">Rankings de Productos</h1>
-          <p className="text-muted-foreground mt-2">
-            Top productos por GMV y Revenue
+        <div className="page-header">
+          <h1 className="page-title">Product Rankings</h1>
+          <p className="page-description">
+            Discover your top performing products and categories
           </p>
         </div>
 
@@ -40,78 +50,109 @@ export default function RankingsPage() {
           </div>
           
           <div className="col-span-3 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Configuración</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Métrica</label>
-                    <div className="flex gap-2 mt-1">
-                      <Button
-                        variant={metric === 'gmv' ? 'default' : 'outline'}
-                        onClick={() => setMetric('gmv')}
-                      >
-                        GMV
-                      </Button>
-                      <Button
-                        variant={metric === 'revenue' ? 'default' : 'outline'}
-                        onClick={() => setMetric('revenue')}
-                      >
-                        Revenue
-                      </Button>
+            {/* Metric selector */}
+            <Card className="glass-card">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Trophy className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Ranking Metric</h3>
+                      <p className="text-sm text-muted-foreground">Select how to rank products</p>
                     </div>
                   </div>
-                  <div>
-                    <label className="text-sm font-medium">Límite</label>
-                    <select
-                      value={limit}
-                      onChange={(e) => setLimit(Number(e.target.value))}
-                      className="mt-1 px-3 py-2 border rounded-md"
+                  <div className="flex gap-2">
+                    <Button
+                      variant={metric === 'gmv' ? 'default' : 'outline'}
+                      onClick={() => setMetric('gmv')}
+                      className="gap-2"
                     >
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="20">20</option>
-                      <option value="50">50</option>
-                    </select>
+                      <TrendingUp className="h-4 w-4" />
+                      GMV
+                    </Button>
+                    <Button
+                      variant={metric === 'revenue' ? 'default' : 'outline'}
+                      onClick={() => setMetric('revenue')}
+                      className="gap-2"
+                    >
+                      <DollarSign className="h-4 w-4" />
+                      Revenue
+                    </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <TopProductsChart
-              data={products || []}
-              metric={metric}
-              loading={isLoading}
-            />
+            {/* Chart */}
+            <div className="chart-container">
+              <TopProductsChart
+                data={products || []}
+                metric={metric}
+                loading={isLoading}
+              />
+            </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Tabla de Productos</CardTitle>
+            {/* Product table */}
+            <Card className="glass-card overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent">
+                <CardTitle className="flex items-center gap-2">
+                  <Medal className="h-5 w-5 text-primary" />
+                  Top {limit} Products by {metric === 'gmv' ? 'GMV' : 'Revenue'}
+                </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-2">Producto</th>
-                        <th className="text-left py-2">Categoría</th>
-                        <th className="text-right py-2">GMV</th>
-                        <th className="text-right py-2">Revenue</th>
-                        <th className="text-right py-2">Órdenes</th>
+                    <thead className="bg-gray-50/50">
+                      <tr>
+                        <th className="text-left py-4 px-6 text-sm font-medium text-muted-foreground">Rank</th>
+                        <th className="text-left py-4 px-6 text-sm font-medium text-muted-foreground">Product ID</th>
+                        <th className="text-left py-4 px-6 text-sm font-medium text-muted-foreground">Category</th>
+                        <th className="text-right py-4 px-6 text-sm font-medium text-muted-foreground">GMV</th>
+                        <th className="text-right py-4 px-6 text-sm font-medium text-muted-foreground">Revenue</th>
+                        <th className="text-right py-4 px-6 text-sm font-medium text-muted-foreground">Orders</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {products?.map((product) => (
-                        <tr key={product.productId} className="border-b">
-                          <td className="py-2 font-mono text-sm">
-                            {product.productId.substring(0, 8)}...
+                    <tbody className="divide-y">
+                      {products?.map((product, index) => (
+                        <tr 
+                          key={product.productId} 
+                          className="group hover:bg-gray-50/50 transition-colors"
+                        >
+                          <td className="py-4 px-6">
+                            <div className="flex items-center gap-2">
+                              <span className={cn(
+                                "text-lg font-bold",
+                                getMedalColor(index)
+                              )}>
+                                #{index + 1}
+                              </span>
+                              {index < 3 && (
+                                <Trophy className={cn("h-4 w-4", getMedalColor(index))} />
+                              )}
+                            </div>
                           </td>
-                          <td className="py-2">{product.productCategory}</td>
-                          <td className="text-right py-2">{formatCurrency(product.gmv)}</td>
-                          <td className="text-right py-2">{formatCurrency(product.revenue)}</td>
-                          <td className="text-right py-2">{formatNumber(product.orders)}</td>
+                          <td className="py-4 px-6 font-mono text-sm">
+                            {product.productId.substring(0, 12)}...
+                          </td>
+                          <td className="py-4 px-6">
+                            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                              {product.productCategory.replace('_', ' ')}
+                            </span>
+                          </td>
+                          <td className="text-right py-4 px-6 font-medium">
+                            {formatCurrency(product.gmv)}
+                          </td>
+                          <td className="text-right py-4 px-6 font-medium">
+                            {formatCurrency(product.revenue)}
+                          </td>
+                          <td className="text-right py-4 px-6">
+                            <span className="px-3 py-1 rounded-full bg-green-500/10 text-green-600 text-xs font-medium">
+                              {formatNumber(product.orders)} orders
+                            </span>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -124,4 +165,8 @@ export default function RankingsPage() {
       </div>
     </DashboardLayout>
   );
+}
+
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(' ');
 }

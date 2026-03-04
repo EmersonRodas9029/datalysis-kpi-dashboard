@@ -7,6 +7,9 @@ import { GlobalFilters } from '@/components/filters/GlobalFilters';
 import { useKPIs, useRevenueTrend } from '@/hooks/useKPI';
 import { useFilters } from '@/hooks/useFilters';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { TrendingUp, Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 
 export default function Home() {
   const { filters, dateRange, updateDateRange } = useFilters();
@@ -17,14 +20,93 @@ export default function Home() {
     grain: 'month',
   });
 
+  // Calcular tendencias
+  const previousPeriodRevenue = trendData && trendData.length > 0 
+    ? trendData[Math.floor(trendData.length / 2)].revenue 
+    : 0;
+  const currentPeriodRevenue = trendData && trendData.length > 0
+    ? trendData[trendData.length - 1].revenue
+    : 0;
+  const revenueTrend = previousPeriodRevenue > 0 
+    ? ((currentPeriodRevenue - previousPeriodRevenue) / previousPeriodRevenue) * 100 
+    : 0;
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold">Dashboard Overview</h1>
-          <p className="text-muted-foreground mt-2">
-            Principales KPIs comerciales y tendencias
+        {/* Header with stats */}
+        <div className="page-header">
+          <h1 className="page-title">Dashboard Overview</h1>
+          <p className="page-description">
+            Welcome back! Here's what's happening with your business today.
           </p>
+        </div>
+
+        {/* Quick stats */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card className="glass-card">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
+                  <h3 className="text-2xl font-bold mt-2">{formatCurrency(kpis?.revenue || 0)}</h3>
+                  <div className="flex items-center gap-1 mt-2">
+                    {revenueTrend > 0 ? (
+                      <ArrowUpRight className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <ArrowDownRight className="h-4 w-4 text-red-500" />
+                    )}
+                    <span className={cn(
+                      "text-sm",
+                      revenueTrend > 0 ? "text-green-500" : "text-red-500"
+                    )}>
+                      {Math.abs(revenueTrend).toFixed(1)}%
+                    </span>
+                    <span className="text-xs text-muted-foreground">vs last period</span>
+                  </div>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-primary" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Active Period</p>
+                  <h3 className="text-lg font-bold mt-2">
+                    {dateRange.from.toLocaleDateString()} - {dateRange.to.toLocaleDateString()}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Last 30 days analysis
+                  </p>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-orange-500/10 flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-orange-500" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Data Coverage</p>
+                  <h3 className="text-lg font-bold mt-2">2016 - 2018</h3>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Complete Olist dataset
+                  </p>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                  <div className="h-6 w-6 text-green-500 font-bold">✓</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="grid grid-cols-4 gap-8">
@@ -36,37 +118,50 @@ export default function Home() {
           </div>
           
           <div className="col-span-3 space-y-6">
-            <KPIGrid data={kpis || {
-              gmv: 0,
-              revenue: 0,
-              orders: 0,
-              aov: 0,
-              itemsPerOrder: 0,
-              cancelRate: 0,
-              onTimeDeliveryRate: 0,
-            }} loading={kpisLoading} />
+            {/* KPI Grid */}
+            <div className="chart-container">
+              <KPIGrid data={kpis || {
+                gmv: 0,
+                revenue: 0,
+                orders: 0,
+                aov: 0,
+                itemsPerOrder: 0,
+                cancelRate: 0,
+                onTimeDeliveryRate: 0,
+              }} loading={kpisLoading} />
+            </div>
 
-            <Tabs defaultValue="line">
-              <TabsList>
-                <TabsTrigger value="line">Línea</TabsTrigger>
-                <TabsTrigger value="bar">Barras</TabsTrigger>
-              </TabsList>
-              <TabsContent value="line">
-                <RevenueTrendChart 
-                  data={trendData || []} 
-                  loading={trendLoading} 
-                />
-              </TabsContent>
-              <TabsContent value="bar">
-                <RevenueBarChart 
-                  data={trendData || []} 
-                  loading={trendLoading} 
-                />
-              </TabsContent>
-            </Tabs>
+            {/* Charts */}
+            <div className="chart-container">
+              <Tabs defaultValue="line" className="w-full">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold">Revenue Analysis</h2>
+                  <TabsList>
+                    <TabsTrigger value="line">Line Chart</TabsTrigger>
+                    <TabsTrigger value="bar">Bar Chart</TabsTrigger>
+                  </TabsList>
+                </div>
+                <TabsContent value="line">
+                  <RevenueTrendChart 
+                    data={trendData || []} 
+                    loading={trendLoading} 
+                  />
+                </TabsContent>
+                <TabsContent value="bar">
+                  <RevenueBarChart 
+                    data={trendData || []} 
+                    loading={trendLoading} 
+                  />
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </div>
       </div>
     </DashboardLayout>
   );
+}
+
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(' ');
 }
