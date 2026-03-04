@@ -6,12 +6,14 @@ import { TopProductsChart } from '@/components/charts/TopProductsChart';
 import { GlobalFilters } from '@/components/filters/GlobalFilters';
 import { useTopProducts } from '@/hooks/useKPI';
 import { useFilters } from '@/hooks/useFilters';
+import { useHydration } from '@/hooks/useHydration';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { Trophy, TrendingUp, DollarSign, Medal } from 'lucide-react';
 
 export default function RankingsPage() {
+  const { isMounted } = useHydration();
   const { filters, dateRange, updateDateRange } = useFilters();
   const [metric, setMetric] = useState<'gmv' | 'revenue'>('gmv');
   const [limit, setLimit] = useState(10);

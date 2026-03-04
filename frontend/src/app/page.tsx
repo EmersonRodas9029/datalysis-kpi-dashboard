@@ -6,12 +6,14 @@ import { RevenueTrendChart, RevenueBarChart } from '@/components/charts/RevenueT
 import { GlobalFilters } from '@/components/filters/GlobalFilters';
 import { useKPIs, useRevenueTrend } from '@/hooks/useKPI';
 import { useFilters } from '@/hooks/useFilters';
+import { useHydration } from '@/hooks/useHydration';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { TrendingUp, Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
 export default function Home() {
+  const { isMounted } = useHydration();
   const { filters, dateRange, updateDateRange } = useFilters();
   
   const { data: kpis, isLoading: kpisLoading } = useKPIs(filters);
@@ -77,9 +79,11 @@ export default function Home() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Active Period</p>
-                  <h3 className="text-lg font-bold mt-2">
-                    {dateRange.from.toLocaleDateString()} - {dateRange.to.toLocaleDateString()}
-                  </h3>
+                  {isMounted && (
+                    <h3 className="text-lg font-bold mt-2">
+                      {dateRange.from.toLocaleDateString()} - {dateRange.to.toLocaleDateString()}
+                    </h3>
+                  )}
                   <p className="text-xs text-muted-foreground mt-2">
                     Last 30 days analysis
                   </p>
