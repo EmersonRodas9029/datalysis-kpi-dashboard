@@ -14,7 +14,7 @@
   <img src="docs/dashboard-preview.png" alt="Dashboard Preview" width="800">
 </p>
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 - [Descripción General](#-descripción-general)
 - [Arquitectura](#-arquitectura)
 - [Modelo de Datos (Star Schema)](#-modelo-de-datos-star-schema)
@@ -29,7 +29,7 @@
 - [Capturas de Pantalla](#-capturas-de-pantalla)
 - [Licencia](#-licencia)
 
-## 🎯 Descripción General
+##  Descripción General
 
 Dashboard comercial interactivo que permite monitorear el desempeño de ventas del dataset público de Olist (e-commerce brasileño). El proyecto implementa una arquitectura moderna con:
 
@@ -39,14 +39,14 @@ Dashboard comercial interactivo que permite monitorear el desempeño de ventas d
 - **Infraestructura**: Docker Compose con 3 servicios
 
 ### Características Principales
-- ✅ 7 KPIs comerciales en tiempo real
-- ✅ Rankings de productos por GMV/Revenue
-- ✅ Tendencias de revenue con granularidad diaria/semanal/mensual
-- ✅ Filtros por rango de fechas y múltiples criterios
-- ✅ Diseño responsive con animaciones y efectos visuales
-- ✅ Arquitectura limpia y escalable
+-  7 KPIs comerciales en tiempo real
+-  Rankings de productos por GMV/Revenue
+-  Tendencias de revenue con granularidad diaria/semanal/mensual
+-  Filtros por rango de fechas y múltiples criterios
+-  Diseño responsive con animaciones y efectos visuales
+-  Arquitectura limpia y escalable
 
-## 🏗️ Arquitectura
+##  Arquitectura
 
 ### Diagrama de Arquitectura
 
@@ -83,7 +83,7 @@ Dashboard comercial interactivo que permite monitorear el desempeño de ventas d
 | **clean** | Datos limpios con tipos correctos y normalización | customers, orders, order_items, products, etc. |
 | **gold** | Esquema estrella para análisis | fact_sales, dim_date, dim_customer, dim_product, dim_order |
 
-## 📊 Modelo de Datos (Star Schema)
+##  Modelo de Datos (Star Schema)
 
 ### Tabla de Hechos: `gold.fact_sales`
 
@@ -176,7 +176,7 @@ Item 1: (100/300) * 270 = R$ 90
 
 Item 2: (200/300) * 270 = R$ 180
 
-📈 KPIs Implementados
+ KPIs Implementados
 KPI	Fórmula	Descripción
 GMV	SUM(item_price)	Gross Merchandise Value
 Revenue	SUM(payment_value_allocated)	Ingresos reales
@@ -226,7 +226,7 @@ Docker + Docker Compose - Contenedores
 
 Git - Control de versiones
 
-📁 Estructura del Proyectocommercial-kpi-dashboard/
+ Estructura del Proyectocommercial-kpi-dashboard/
 ├── backend/                    # Backend Node.js + Express
 │   ├── src/
 │   │   ├── domain/            # Entidades y puertos
@@ -259,15 +259,18 @@ Git
 
 Puertos disponibles: 3000, 4000, 5433
 
-🚀 Instalación y Ejecución
+ Instalación y Ejecución
 1. Clonar el repositorio
 git clone https://github.com/EmersonRodas9029/datalysis-kpi-dashboard.git
 cd commercial-kpi-dashboard2. Configurar variables de entorno
 cp .env.example .env
-# Editar .env si es necesario (los valores por defecto funcionan)3. Descargar y preparar los datos
+# Editar .env si es necesario (los valores por defecto funcionan)
+2. Descargar y preparar los datos
 # Mover los archivos CSV a la carpeta data (desde tu descarga)
 ./scripts/move-csv-files.sh4. Levantar los servicios con Docker
-docker compose up --buildEsto iniciará:
+docker compose up --build  
+
+Esto iniciará:
 
 PostgreSQL en localhost:5433
 
@@ -301,7 +304,7 @@ get-top-products.use-case.test.ts	Unitario	Prueba el caso de uso de rankings
 kpi-api.test.ts	Integración	Prueba todos los endpoints
 Total: 20 tests (12 unitarios + 8 integración)
 
-💡 Decisiones Técnicas
+ Decisiones Técnicas
 1. Arquitectura Hexagonal
 Por qué: Separación clara de responsabilidades, fácil testing y mantenimiento
 
@@ -330,18 +333,6 @@ Por qué: Entorno reproducible, fácil despliegue, aislamiento de servicios
 6. Validación con Zod
 Por qué: TypeScript first, composable, excelente integración con Express
 
-🖼️ Capturas de Pantalla
-Dashboard Overview
-https://docs/overview.png
-
-Rankings de Productos
-https://docs/rankings.png
-
-Tendencias
-https://docs/trends.png
-
-Análisis de Productos
-https://docs/products.png
 
 🔧 Scripts Útiles# ETL completo (carga + transformaciones)
 ./scripts/run-full-etl.sh
