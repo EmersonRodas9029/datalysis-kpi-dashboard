@@ -10,105 +10,248 @@
   <img src="https://img.shields.io/badge/Tests-Jest-C21325" alt="Jest">
 </div>
 
-<p align="center">
-  <img src="docs/dashboard-preview.png" alt="Dashboard Preview" width="800">
-</p>
-
 ## Tabla de Contenidos
 - [Descripción General](#-descripción-general)
 - [Arquitectura](#-arquitectura)
-- [Modelo de Datos (Star Schema)](#-modelo-de-datos-star-schema)
-- [KPIs Implementados](#-kpis-implementados)
 - [Tecnologías Utilizadas](#-tecnologías-utilizadas)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Requisitos Previos](#-requisitos-previos)
-- [Instalación y Ejecución](#-instalación-y-ejecución)
-- [Endpoints de la API](#-endpoints-de-la-api)
-- [Pruebas](#-pruebas)
+- [Modelo de Datos](#-modelo-de-datos)
+- [KPIs Implementados](#-kpis-implementados)
+- [API Endpoints](#-api-endpoints)
 - [Decisiones Técnicas](#-decisiones-técnicas)
-- [Capturas de Pantalla](#-capturas-de-pantalla)
-- [Licencia](#-licencia)
 
 ##  Descripción General
 
-Dashboard comercial interactivo que permite monitorear el desempeño de ventas del dataset público de Olist (e-commerce brasileño). El proyecto implementa una arquitectura moderna con:
-
-- **Backend**: Node.js + Express con arquitectura hexagonal
-- **Frontend**: Next.js 14 con diseño glassmorphism
-- **Base de datos**: PostgreSQL con esquema estrella
-- **Infraestructura**: Docker Compose con 3 servicios
+Dashboard comercial interactivo construido con **Next.js**, **Node.js** y **PostgreSQL** que permite monitorear el desempeño de ventas del dataset público de Olist (e-commerce brasileño con +100k órdenes).
 
 ### Características Principales
--  7 KPIs comerciales en tiempo real
--  Rankings de productos por GMV/Revenue
--  Tendencias de revenue con granularidad diaria/semanal/mensual
--  Filtros por rango de fechas y múltiples criterios
--  Diseño responsive con animaciones y efectos visuales
--  Arquitectura limpia y escalable
+-  **7 KPIs** en tiempo real (GMV, Revenue, Orders, AOV, Items/Order, Cancel Rate, On-Time Delivery)
+- **Rankings** de productos por GMV y Revenue
+-  **Tendencias** con granularidad diaria/semanal/mensual
+-  **Filtros** por rango de fechas, estado de orden, categoría y estado del cliente
+-  **Diseño responsive** con glassmorphism y animaciones
+-  **Arquitectura hexagonal** en backend
+- **Esquema estrella** en base de datos
 
 ##  Arquitectura
 
-### Diagrama de Arquitectura
+### Diagrama de Alto Nivel
 
+┌─────────────────────────────────────────────────────────────┐
 │ Frontend (Next.js) │
 │ Port 3000 │
+│ ┌──────────────────────────────────────────────────────┐ │
+│ │ Pages: Overview, Rankings, Trends, Products │ │
+│ │ Components: KPICards, Charts, Filters │ │
+│ │ State: React Query + Hooks │ │
+│ └──────────────────────────────────────────────────────┘ │
 └────────────────────────────┬────────────────────────────────┘
-│ HTTP
+│ HTTP REST
 ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ Backend (Node.js + Express) │
+│ Backend (Node.js) │
 │ Port 4000 │
 │ ┌──────────────────────────────────────────────────────┐ │
 │ │ Arquitectura Hexagonal │ │
-│ │ ┌──────────┐ ┌──────────┐ ┌──────────────────┐ │ │
-│ │ │ Adapters │→│ Use Cases │→│ Repositories │ │ │
-│ │ │ (HTTP) │←│(Application)│←│ (Infrastructure)│ │ │
-│ │ └──────────┘ └──────────┘ └──────────────────┘ │ │
+│ │ │ │
+│ │ ┌──────────────┐ ┌──────────────┐ │ │
+│ │ │ Adapters │────▶│ Use Cases │ │ │
+│ │ │ (HTTP) │◀────│ (Applicación)│ │ │
+│ │ └──────────────┘ └──────────────┘ │ │
+│ │ │ │ │ │
+│ │ ▼ ▼ │ │
+│ │ ┌──────────────┐ ┌──────────────┐ │ │
+│ │ │ Controllers │ │ Domain │ │ │
+│ │ │ & Routes │ │ (Entities) │ │ │
+│ │ └──────────────┘ └──────────────┘ │ │
+│ │ │ │ │
+│ │ ▼ │ │
+│ │ ┌──────────────┐ ┌──────────────┐ │ │
+│ │ │ Repositories │◀────│ Ports │ │ │
+│ │ │(Prisma/SQL) │ │ (Interfaces) │ │ │
+│ │ └──────────────┘ └──────────────┘ │ │
 │ └──────────────────────────────────────────────────────┘ │
 └────────────────────────────┬────────────────────────────────┘
 │ SQL (solo gold)
 ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ PostgreSQL (Port 5433) │
-│ ┌──────────┐ ┌──────────┐ ┌──────────────────────────┐ │
-│ │ raw │→│ clean │→│ gold (Star Schema) │ │
-│ │(CSV raw) │ │(Limpieza) │ │ fact_sales + dim_* │ │
-│ └──────────┘ └──────────┘ └──────────────────────────┘ │
+│ │
+│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ │
+│ │ raw │───▶│ clean │───▶│ gold │ │
+│ │ (CSV raw) │ │ (Limpieza) │ │Star Schema │ │
+│ └──────────────┘ └──────────────┘ └──────────────┘ │
+│ │ │
+│ ▼ │
+│ ┌────────────────┐ │
+│ │ fact_sales │ │
+│ │ dim_date │ │
+│ │ dim_customer │ │
+│ │ dim_product │ │
+│ │ dim_order │ │
+│ └────────────────┘ │
 └─────────────────────────────────────────────────────────────┘
+
+### Flujo de Datos
+
+1. **Ingesta**: CSV → `raw.*` (copia exacta)
+2. **Limpieza**: `raw.*` → `clean.*` (tipos correctos, normalización)
+3. **Transformación**: `clean.*` → `gold.*` (esquema estrella)
+4. **Consulta**: Backend consulta solo `gold.fact_sales` (JOIN a dimensiones)
+5. **Presentación**: Frontend consume API y visualiza
+
+## Tecnologías Utilizadas
+
+### Backend
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| **Node.js** | 18.x | Entorno de ejecución |
+| **Express** | 4.18 | Framework web |
+| **TypeScript** | 5.x | Tipado estático |
+| **Prisma** | 5.x | ORM y migraciones |
+| **Zod** | 3.x | Validación de datos |
+| **Jest** | 29.x | Testing unitario |
+| **Supertest** | 7.x | Testing de integración |
+
+### Frontend
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| **Next.js** | 14.0.3 | Framework React |
+| **TypeScript** | 5.x | Tipado estático |
+| **Tailwind CSS** | 3.x | Estilos |
+| **Recharts** | 2.x | Gráficos |
+| **React Query** | 3.x | Estado del servidor |
+| **Axios** | 1.x | Cliente HTTP |
+| **Lucide React** | - | Iconos |
+
+### Base de Datos
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| **PostgreSQL** | 15 | Base de datos relacional |
+| **PL/pgSQL** | - | Funciones almacenadas |
+
+### Infraestructura
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| **Docker** | 24.0+ | Contenedores |
+| **Docker Compose** | 2.20+ | Orquestación |
+| **Git** | - | Control de versiones |
+
+##  Estructura del Proyecto
+
+commercial-kpi-dashboard/
+├── 📁 backend/ # Backend Node.js + Express
+│ ├── 📁 src/
+│ │ ├── 📁 domain/ # Entidades y puertos
+│ │ │ ├── entities/ # KPI, TopProduct, etc.
+│ │ │ ├── value-objects/ # DateRange, FilterParams
+│ │ │ └── ports/ # IKpiRepository interface
+│ │ │
+│ │ ├── 📁 application/ # Casos de uso
+│ │ │ ├── use-cases/ # GetKpis, GetRevenueTrend, GetTopProducts
+│ │ │ └── dtos/ # KpiResponseDto, etc.
+│ │ │
+│ │ ├── 📁 infrastructure/ # Implementaciones
+│ │ │ ├── database/ # Prisma client, schema
+│ │ │ └── repositories/ # PrismaKpiRepository
+│ │ │
+│ │ └── 📁 adapters/ # Interfaces externas
+│ │ ├── http/ # Routes
+│ │ ├── controllers/ # KpiController
+│ │ ├── middleware/ # Error handler, validation
+│ │ └── validators/ # Zod schemas
+│ │
+│ ├── 📁 tests/ # Tests
+│ │ ├── unit/ # Use cases tests
+│ │ └── integration/ # API tests
+│ │
+│ └── 📁 scripts/ # Scripts ETL específicos
+│
+├── 📁 frontend/ # Frontend Next.js
+│ ├── 📁 src/
+│ │ ├── 📁 app/ # Páginas (App Router)
+│ │ │ ├── page.tsx # Overview
+│ │ │ ├── rankings/page.tsx # Rankings
+│ │ │ ├── trends/page.tsx # Trends
+│ │ │ └── products/page.tsx # Products
+│ │ │
+│ │ ├── 📁 components/ # Componentes React
+│ │ │ ├── layout/ # DashboardLayout
+│ │ │ ├── kpi-cards/ # KPICard, KPIGrid
+│ │ │ ├── charts/ # RevenueTrendChart, TopProductsChart
+│ │ │ ├── filters/ # GlobalFilters, DateRangeFilter
+│ │ │ └── ui/ # Card, Button, Tabs
+│ │ │
+│ │ ├── 📁 hooks/ # Custom hooks
+│ │ │ ├── useKPI.ts # React Query hooks
+│ │ │ ├── useFilters.ts # Filters state
+│ │ │ └── useHydration.ts # Hydration fix
+│ │ │
+│ │ ├── 📁 lib/ # Utilidades
+│ │ │ ├── api/ # Cliente Axios
+│ │ │ └── utils.ts # Formatters, cn
+│ │ │
+│ │ └── 📁 types/ # TypeScript types
+│ │
+│ └── 📁 public/ # Archivos estáticos
+│
+├── 📁 docker/ # Configuración Docker
+│ ├── 📁 backend/ # Dockerfile backend
+│ ├── 📁 frontend/ # Dockerfile frontend
+│ └── 📁 postgres/ # Scripts SQL iniciales
+│ ├── 01-create-schemas.sql
+│ ├── 02-create-raw-tables.sql
+│ ├── 03-create-clean-tables.sql
+│ └── 04-create-star-schema.sql
+│
+├── 📁 scripts/ # Scripts ETL generales
+│ ├── move-csv-files.sh # Mover CSVs al proyecto
+│ ├── load-raw-data.sh # Cargar raw
+│ ├── transform-raw-to-clean.sh # Limpiar datos
+│ ├── build-star-schema.sh # Construir gold
+│ └── verify-gold-schema.sh # Verificar datos
+│
+├── 📁 data/ # Datos CSV
+│ └── 📁 raw/ # Archivos CSV de Olist
+│
+├── docker-compose.yml # Orquestación de servicios
+├── .env.example # Variables de entorno ejemplo
+└── INSTALL.md # Guía de instalación 
+
+## Modelo de Datos
+
 ### Capas de Datos
 
 | Esquema | Descripción | Tablas |
 |---------|-------------|--------|
-| **raw** | Datos crudos de los CSV de Olist | customers, orders, order_items, products, etc. |
-| **clean** | Datos limpios con tipos correctos y normalización | customers, orders, order_items, products, etc. |
-| **gold** | Esquema estrella para análisis | fact_sales, dim_date, dim_customer, dim_product, dim_order |
-
-##  Modelo de Datos (Star Schema)
+| **raw** | Datos crudos de los CSV | customers, orders, order_items, products, sellers, payments, reviews, geolocation |
+| **clean** | Datos limpios y normalizados | customers, orders, order_items, products, sellers, payments |
+| **gold** | Esquema estrella analítico | fact_sales, dim_date, dim_customer, dim_product, dim_order |
 
 ### Tabla de Hechos: `gold.fact_sales`
 
 **Grano**: 1 fila por item de orden (`order_id` + `order_item_id`)
 
-| Columna | Tipo | Descripción |
-|---------|------|-------------|
-| fact_sales_sk | SERIAL | Clave primaria surrogate |
-| order_sk | INTEGER | FK a dim_order |
-| customer_sk | INTEGER | FK a dim_customer |
-| product_sk | INTEGER | FK a dim_product |
-| date_sk | INTEGER | FK a dim_date |
-| order_id | VARCHAR(50) | ID de la orden |
-| order_item_id | INTEGER | Número de item en la orden |
-| item_price | DECIMAL(10,2) | Precio del item |
-| freight_value | DECIMAL(10,2) | Valor del envío |
-| total_order_value | DECIMAL(10,2) | Valor total de la orden |
-| payment_value_allocated | DECIMAL(10,2) | Pago prorrateado |
-| is_canceled | BOOLEAN | Flag de cancelación |
-| is_delivered | BOOLEAN | Flag de entrega |
-| is_on_time | BOOLEAN | Flag de entrega a tiempo |
+| Columna | Tipo | Descripción | KPI |
+|---------|------|-------------|-----|
+| fact_sales_sk | SERIAL | Clave primaria | - |
+| order_sk | INTEGER | FK a dim_order | - |
+| customer_sk | INTEGER | FK a dim_customer | - |
+| product_sk | INTEGER | FK a dim_product | - |
+| date_sk | INTEGER | FK a dim_date | - |
+| order_id | VARCHAR(50) | ID de la orden | - |
+| order_item_id | INTEGER | Número de item | - |
+| item_price | DECIMAL | Precio del item | GMV |
+| freight_value | DECIMAL | Valor del envío | - |
+| total_order_value | DECIMAL | Valor total | - |
+| payment_value_allocated | DECIMAL | Pago prorrateado | Revenue |
+| is_canceled | BOOLEAN | Flag de cancelación | Cancel Rate |
+| is_delivered | BOOLEAN | Flag de entrega | - |
+| is_on_time | BOOLEAN | Flag de entrega a tiempo | On-Time Rate |
 
 ### Dimensiones
 
-#### `gold.dim_date`
+#### `gold.dim_date` (1,139 días)
 | Columna | Tipo | Descripción |
 |---------|------|-------------|
 | date_sk | SERIAL | Clave surrogate |
@@ -116,243 +259,202 @@ Dashboard comercial interactivo que permite monitorear el desempeño de ventas d
 | year | INTEGER | Año |
 | quarter | INTEGER | Trimestre |
 | month | INTEGER | Mes |
-| month_name | VARCHAR(20) | Nombre del mes |
+| month_name | VARCHAR | Nombre del mes |
 | week | INTEGER | Semana del año |
 | day_of_week | INTEGER | Día de la semana |
-| day_name | VARCHAR(20) | Nombre del día |
+| day_name | VARCHAR | Nombre del día |
 | is_weekend | BOOLEAN | Flag de fin de semana |
 
-#### `gold.dim_customer`
+#### `gold.dim_customer` (99,441 registros)
 | Columna | Tipo | Descripción |
 |---------|------|-------------|
 | customer_sk | SERIAL | Clave surrogate |
-| customer_id | VARCHAR(50) | ID del cliente |
-| customer_unique_id | VARCHAR(50) | ID único |
-| customer_city | VARCHAR(100) | Ciudad |
-| customer_state | VARCHAR(2) | Estado (UF) |
-| customer_zip_code_prefix | VARCHAR(10) | Prefijo CEP |
+| customer_id | VARCHAR | ID del cliente |
+| customer_unique_id | VARCHAR | ID único |
+| customer_city | VARCHAR | Ciudad |
+| customer_state | VARCHAR | Estado (UF) |
+| customer_zip_code_prefix | VARCHAR | Prefijo CEP |
 
-#### `gold.dim_product`
+#### `gold.dim_product` (32,951 registros)
 | Columna | Tipo | Descripción |
 |---------|------|-------------|
 | product_sk | SERIAL | Clave surrogate |
-| product_id | VARCHAR(50) | ID del producto |
-| product_category_name | VARCHAR(100) | Categoría (PT) |
-| product_category_name_english | VARCHAR(100) | Categoría (EN) |
+| product_id | VARCHAR | ID del producto |
+| product_category_name | VARCHAR | Categoría (PT) |
+| product_category_name_english | VARCHAR | Categoría (EN) |
 | product_weight_g | INTEGER | Peso en gramos |
 | product_length_cm | INTEGER | Largo |
 | product_height_cm | INTEGER | Alto |
 | product_width_cm | INTEGER | Ancho |
 
-#### `gold.dim_order`
+#### `gold.dim_order` (99,441 registros)
 | Columna | Tipo | Descripción |
 |---------|------|-------------|
 | order_sk | SERIAL | Clave surrogate |
-| order_id | VARCHAR(50) | ID de la orden |
-| customer_id | VARCHAR(50) | ID del cliente |
-| order_status | VARCHAR(50) | Estado |
+| order_id | VARCHAR | ID de la orden |
+| customer_id | VARCHAR | ID del cliente |
+| order_status | VARCHAR | Estado |
 | order_purchase_timestamp | TIMESTAMP | Fecha de compra |
 | order_approved_at | TIMESTAMP | Fecha de aprobación |
 | order_delivered_carrier_date | TIMESTAMP | Fecha envío |
 | order_delivered_customer_date | TIMESTAMP | Fecha entrega |
 | order_estimated_delivery_date | TIMESTAMP | Fecha estimada |
-| purchase_date_sk | INTEGER | FK a dim_date |
-| approved_date_sk | INTEGER | FK a dim_date |
-| delivered_date_sk | INTEGER | FK a dim_date |
-| estimated_delivery_date_sk | INTEGER | FK a dim_date |
 
-### Asignación de Pagos (Prorrateo)
+### Prorrateo de Pagos
 
-Para mantener el grano de 1 fila por item, los pagos se prorratean usando la siguiente fórmula:
+Para mantener el grano de 1 fila por item, los pagos se prorratean usando:
 
 ```sql
 payment_value_allocated = (item_price / total_order_price) * total_payment_valueEjemplo:
 
-Orden con 2 items: R$ 100 y R$ 200
+Orden #123 con 2 items:
+
+Item A: R$ 100
+
+Item B: R$ 200
 
 Pago total: R$ 270
 
-Item 1: (100/300) * 270 = R$ 90
+Cálculos:
 
-Item 2: (200/300) * 270 = R$ 180
+Item A: (100 / 300) * 270 = R$ 90
 
- KPIs Implementados
-KPI	Fórmula	Descripción
-GMV	SUM(item_price)	Gross Merchandise Value
-Revenue	SUM(payment_value_allocated)	Ingresos reales
-Orders	COUNT(DISTINCT order_id)	Número de órdenes
-AOV	Revenue / Orders	Average Order Value
-Items per Order	COUNT(order_item_id) / Orders	Items por orden
-Cancel Rate	cancelled_orders / total_orders	Tasa de cancelación
-On-Time Delivery	delivered_on_time / delivered_total	Entregas a tiempo
-🛠️ Tecnologías Utilizadas
-Backend
-Node.js + Express - Servidor web
+Item B: (200 / 300) * 270 = R$ 180
 
-TypeScript - Tipado estático
+Total prorrateado: R$ 270 ✓
 
-Prisma - ORM para PostgreSQL
+KPIs Implementados
+KPI	Fórmula	Descripción	Filtros
+GMV	SUM(item_price)	Gross Merchandise Value	✅
+Revenue	SUM(payment_value_allocated)	Ingresos reales	✅
+Orders	COUNT(DISTINCT order_id)	Número de órdenes	✅
+AOV	Revenue / Orders	Average Order Value	✅
+Items per Order	COUNT(order_item_id) / Orders	Items por orden	✅
+Cancel Rate	cancelled_orders / total_orders	Tasa de cancelación	✅
+On-Time Delivery	delivered_on_time / delivered_total	Entregas a tiempo	✅
+📡 API Endpoints
+GET /api/health
+Health check del servidor.
 
-Zod - Validación de datos
+GET /api/kpis
+Obtiene los KPIs principales con filtros.
 
-Jest + Supertest - Testing
+Parámetros:
 
-Arquitectura Hexagonal - Organización del código
+from (requerido): Fecha inicial (YYYY-MM-DD)
 
-Frontend
-Next.js 14 - Framework React
+to (requerido): Fecha final (YYYY-MM-DD)
 
-TypeScript - Tipado estático
+orderStatus (opcional): Estado(s) de orden
 
-Tailwind CSS - Estilos
+productCategory (opcional): Categoría(s) de producto
 
-Recharts - Gráficos
+customerState (opcional): Estado(s) del cliente
 
-React Query - Gestión de estado
+GET /api/trend/revenue
+Obtiene la tendencia de revenue.
 
-Axios - Cliente HTTP
+Parámetros:
 
-Lucide React - Iconos
+from (requerido): Fecha inicial
 
-Base de Datos
-PostgreSQL 15 - Base de datos relacional
+to (requerido): Fecha final
 
-Esquema Estrella - Modelado analítico
+grain (opcional): 'day' | 'week' | 'month'
 
-PL/pgSQL - Funciones almacenadas
+GET /api/rankings/products
+Obtiene el ranking de productos.
 
-Infraestructura
-Docker + Docker Compose - Contenedores
+Parámetros:
 
-Git - Control de versiones
+from (requerido): Fecha inicial
 
- Estructura del Proyectocommercial-kpi-dashboard/
-├── backend/                    # Backend Node.js + Express
-│   ├── src/
-│   │   ├── domain/            # Entidades y puertos
-│   │   ├── application/        # Casos de uso
-│   │   ├── infrastructure/     # Repositorios, Prisma
-│   │   └── adapters/          # Controladores HTTP
-│   ├── tests/                  # Tests unitarios e integración
-│   └── scripts/                # Scripts ETL
-├── frontend/                   # Frontend Next.js
-│   ├── src/
-│   │   ├── app/               # Páginas (App Router)
-│   │   ├── components/        # Componentes React
-│   │   ├── hooks/             # Custom hooks
-│   │   ├── lib/               # Utilidades
-│   │   └── types/             # TypeScript types
-│   └── public/                 # Archivos estáticos
-├── docker/                     # Configuración Docker
-│   ├── backend/                # Dockerfile backend
-│   ├── frontend/               # Dockerfile frontend
-│   └── postgres/               # Scripts SQL iniciales
-├── scripts/                    # Scripts ETL generales
-├── data/                       # Datos CSV
-├── docker-compose.yml          # Orquestación de servicios
-└── README.md                   # Documentación📋 Requisitos Previos
-Docker 24.0+ y Docker Compose 2.20+
+to (requerido): Fecha final
 
-Node.js 18+ (para desarrollo local)
+metric (opcional): 'gmv' | 'revenue'
 
-Git
-
-Puertos disponibles: 3000, 4000, 5433
-
- Instalación y Ejecución
-1. Clonar el repositorio
-git clone https://github.com/EmersonRodas9029/datalysis-kpi-dashboard.git
-cd commercial-kpi-dashboard2. Configurar variables de entorno
-cp .env.example .env
-# Editar .env si es necesario (los valores por defecto funcionan)
-2. Descargar y preparar los datos
-# Mover los archivos CSV a la carpeta data (desde tu descarga)
-./scripts/move-csv-files.sh4. Levantar los servicios con Docker
-docker compose up --build  
-
-Esto iniciará:
-
-PostgreSQL en localhost:5433
-
-Backend en http://localhost:4000
-
-Frontend en http://localhost:3000
-
-5. Cargar los datos en la base de datos
-En otra terminal:# Ejecutar ETL completo
-./scripts/run-full-etl.shEste script:
-
-Carga los CSV a raw.*
-
-Transforma raw → clean
-
-Construye el star schema en gold6. Verificar la instalación
-# Health check del backend
-curl http://localhost:4000/api/health
-
-# Probar KPIs
-curl "http://localhost:4000/api/kpis?from=2018-01-01&to=2018-12-31"🧪 Pruebas
-Backend
-cd backend
-npm install
-npm test          # Ejecutar tests
-npm run test:coverage  # Ver coberturaTests Implementados
-Archivo	Tipo	Descripción
-get-kpis.use-case.test.ts	Unitario	Prueba el caso de uso de KPIs
-get-revenue-trend.use-case.test.ts	Unitario	Prueba el caso de uso de tendencias
-get-top-products.use-case.test.ts	Unitario	Prueba el caso de uso de rankings
-kpi-api.test.ts	Integración	Prueba todos los endpoints
-Total: 20 tests (12 unitarios + 8 integración)
+limit (opcional): 1-100
 
  Decisiones Técnicas
-1. Arquitectura Hexagonal
-Por qué: Separación clara de responsabilidades, fácil testing y mantenimiento
+1. Arquitectura Hexagonal en Backend
+Motivación: Separación clara de responsabilidades, fácil testing
 
-Beneficio: Los use cases son independientes de frameworks y bases de datos
+Beneficio: Los use cases son independientes de frameworks y BD
+
+Implementación: Domain (entities + ports), Application (use cases), Infrastructure (repos), Adapters (HTTP)
 
 2. Esquema Estrella en Gold
-Por qué: Optimizado para consultas analíticas
+Motivación: Optimizado para consultas analíticas
 
 Grano: 1 fila por item (permite análisis a nivel producto)
 
-Prorrateo: Opción A (proporcional al precio) para mantener consistencia
+Prorrateo: Proporcional al precio (Opción A) para mantener consistencia
 
-3. Prisma como ORM
-Por qué: Type safety, migraciones automáticas, excelente DX
+Validación: Diferencia < 2% entre pagos originales y prorrateados
 
-Uso: Consultas SQL raw para mejor control en KPIs complejos
+3. Prisma + SQL Raw
+Motivación: Type safety + control fino en consultas complejas
+
+Uso: Prisma para modelos, SQL raw para KPIs (mejor performance)
 
 4. Next.js App Router
-Por qué: Server components, routing intuitivo, optimizaciones automáticas
+Motivación: Server components, routing intuitivo
 
-Client Components: Solo donde es necesario (interactividad)
+Client Components: Solo donde hay interactividad (filtros, gráficos)
 
-5. Docker Compose
-Por qué: Entorno reproducible, fácil despliegue, aislamiento de servicios
+5. Diseño Glassmorphism
+Motivación: Moderno, profesional, buena UX
 
-6. Validación con Zod
-Por qué: TypeScript first, composable, excelente integración con Express
+Implementación: Tailwind CSS + efectos de blur y gradientes
+
+6. React Query para Estado
+Motivación: Caching automático, revalidación, manejo de errores
+
+Configuración: StaleTime 5min, retry 1 vez
+
+7. Validación con Zod
+Motivación: TypeScript first, composable, excelente DX
+
+Uso: Validación de queries en backend y frontend
+
+8. Docker Compose
+Motivación: Entorno reproducible, fácil despliegue
+
+Servicios: PostgreSQL, Backend, Frontend
+
+Healthchecks: Todos los servicios verifican su estado
+
+ Estadísticas del Dataset
+
+Tabla	Registros	Tamaño
+customers	99,441	19 MB
+orders	99,441	32 MB
+order_items	112,650	33 MB
+order_payments	103,886	24 MB
+products	32,951	6 MB
+sellers	3,095	544 KB
+geolocation	1,000,163	68 MB
+fact_sales	112,647	-
+
+ Tests
+
+Tipo	Archivo	Tests
+Unitario	get-kpis.use-case.test.ts	3
+Unitario	get-revenue-trend.use-case.test.ts	4
+Unitario	get-top-products.use-case.test.ts	5
+Integración	kpi-api.test.ts	8
+Total		20
+
+Archivos de Configuración Clave
+
+docker-compose.yml: Orquestación de servicios
+
+.env.example: Variables de entorno
+
+backend/prisma/schema.prisma: Modelo de datos
+
+frontend/tailwind.config.js: Estilos
+
+backend/jest.config.js: Testing
 
 
-🔧 Scripts Útiles# ETL completo (carga + transformaciones)
-./scripts/run-full-etl.sh
-
-# Solo carga raw
-./scripts/load-raw-data.sh
-
-# Solo transformación raw → clean
-./scripts/transform-raw-to-clean.sh
-
-# Solo construcción star schema
-./scripts/build-star-schema.sh
-
-# Verificar datos cargados
-./scripts/verify-gold-schema.sh📊 Datos del Dataset Olist
-Tabla	Registros	Descripción
-customers	99,441	Clientes
-orders	99,441	Órdenes
-order_items	112,650	Items de órdenes
-order_payments	103,886	Pagos
-products	32,951	Productos
-sellers	3,095	Vendedores
-geolocation	1,000,163	Geolocalización
