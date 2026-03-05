@@ -4,7 +4,7 @@ import { FilterParams, RevenueTrendPoint } from '../../domain/entities/kpi.entit
 export class GetRevenueTrendUseCase {
   constructor(private readonly kpiRepository: IKpiRepository) {}
 
-  async execute(filters: FilterParams, grain: 'day' | 'week'): Promise<RevenueTrendPoint[]> {
+  async execute(filters: FilterParams, grain: 'day' | 'week' | 'month'): Promise<RevenueTrendPoint[]> {
     return this.kpiRepository.getRevenueTrend(filters, grain);
   }
 }

@@ -68,9 +68,9 @@ describe('GetRevenueTrendUseCase', () => {
 
   it('should handle empty result from repository', async () => {
     const emptyRepo = {
-      getKpis: jest.fn(),
+      getKpis: jest.fn().mockResolvedValue({}),
       getRevenueTrend: jest.fn().mockResolvedValue([]),
-      getTopProducts: jest.fn(),
+      getTopProducts: jest.fn().mockResolvedValue([]),
     };
 
     const emptyUseCase = new GetRevenueTrendUseCase(emptyRepo);
