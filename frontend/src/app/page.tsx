@@ -14,7 +14,7 @@ import { formatCurrency } from '@/lib/utils';
 
 export default function Home() {
   const { isMounted } = useHydration();
-  const { filters, dateRange, updateDateRange } = useFilters();
+  const { filters, dateRange, updateDateRange, updateFilter, clearFilters } = useFilters();
   
   const { data: kpis, isLoading: kpisLoading } = useKPIs(filters);
   const { data: trendData, isLoading: trendLoading } = useRevenueTrend({
@@ -99,10 +99,12 @@ export default function Home() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Data Coverage</p>
-                  <h3 className="text-lg font-bold mt-2">2016 - 2018</h3>
+                  <p className="text-sm font-medium text-muted-foreground">Active Filters</p>
+                  <h3 className="text-lg font-bold mt-2">
+                    {Object.values(filters).filter(v => Array.isArray(v) && v.length > 0).length}
+                  </h3>
                   <p className="text-xs text-muted-foreground mt-2">
-                    Complete Olist dataset
+                    filters applied
                   </p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -118,6 +120,13 @@ export default function Home() {
             <GlobalFilters
               dateRange={dateRange}
               onDateRangeChange={updateDateRange}
+              filters={{
+                orderStatus: filters.orderStatus,
+                productCategory: filters.productCategory,
+                customerState: filters.customerState,
+              }}
+              onFilterChange={updateFilter}
+              onClearFilters={clearFilters}
             />
           </div>
           

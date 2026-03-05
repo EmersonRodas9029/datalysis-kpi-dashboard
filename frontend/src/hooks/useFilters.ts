@@ -15,15 +15,26 @@ export const useFilters = () => {
 
   const updateDateRange = useCallback((from: Date, to: Date) => {
     setDateRange({ from, to });
-    setFilters({
-      ...filters,
+    setFilters(prev => ({
+      ...prev,
       from: from.toISOString().split('T')[0],
       to: to.toISOString().split('T')[0],
-    });
-  }, [filters]);
+    }));
+  }, []);
 
   const updateFilter = useCallback((key: keyof FilterParams, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+  }, []);
+
+  const clearFilters = useCallback(() => {
+    setFilters({
+      from: defaultFilters.from,
+      to: defaultFilters.to,
+    });
+    setDateRange({
+      from: new Date(defaultFilters.from),
+      to: new Date(defaultFilters.to),
+    });
   }, []);
 
   return {
@@ -31,5 +42,6 @@ export const useFilters = () => {
     dateRange,
     updateDateRange,
     updateFilter,
+    clearFilters,
   };
 };

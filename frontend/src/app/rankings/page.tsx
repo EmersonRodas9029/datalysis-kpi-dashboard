@@ -6,15 +6,13 @@ import { TopProductsChart } from '@/components/charts/TopProductsChart';
 import { GlobalFilters } from '@/components/filters/GlobalFilters';
 import { useTopProducts } from '@/hooks/useKPI';
 import { useFilters } from '@/hooks/useFilters';
-import { useHydration } from '@/hooks/useHydration';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { Trophy, TrendingUp, DollarSign, Medal } from 'lucide-react';
 
 export default function RankingsPage() {
-  const { isMounted } = useHydration();
-  const { filters, dateRange, updateDateRange } = useFilters();
+  const { filters, dateRange, updateDateRange, updateFilter, clearFilters } = useFilters();
   const [metric, setMetric] = useState<'gmv' | 'revenue'>('gmv');
   const [limit, setLimit] = useState(10);
 
@@ -48,6 +46,13 @@ export default function RankingsPage() {
             <GlobalFilters
               dateRange={dateRange}
               onDateRangeChange={updateDateRange}
+              filters={{
+                orderStatus: filters.orderStatus,
+                productCategory: filters.productCategory,
+                customerState: filters.customerState,
+              }}
+              onFilterChange={updateFilter}
+              onClearFilters={clearFilters}
             />
           </div>
           
