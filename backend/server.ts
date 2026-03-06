@@ -11,7 +11,6 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
 
-// Middleware
 app.use(helmet());
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -20,19 +19,16 @@ app.use(cors({
 app.use(express.json());
 app.use(morgan('combined'));
 
-// Rutas
 app.use('/api', routes);
 
-// Manejo de errores
 app.use(errorHandler);
 
-// 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
 app.listen(port, () => {
-  console.log(`🚀 Backend running on port ${port}`);
-  console.log(`📊 API available at http://localhost:${port}/api`);
-  console.log(`🔍 Health check: http://localhost:${port}/api/health`);
+  console.log(` Backend running on port ${port}`);
+  console.log(` API available at http://localhost:${port}/api`);
+  console.log(`Health check: http://localhost:${port}/api/health`);
 });

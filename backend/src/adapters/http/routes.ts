@@ -9,14 +9,12 @@ import { kpiQuerySchema, trendQuerySchema, topProductsQuerySchema } from '../val
 
 const router = Router();
 
-// Inicializar dependencias
 const repository = new PrismaKpiRepository();
 const getKpisUseCase = new GetKpisUseCase(repository);
 const getRevenueTrendUseCase = new GetRevenueTrendUseCase(repository);
 const getTopProductsUseCase = new GetTopProductsUseCase(repository);
 const controller = new KpiController(getKpisUseCase, getRevenueTrendUseCase, getTopProductsUseCase);
 
-// Rutas
 router.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });

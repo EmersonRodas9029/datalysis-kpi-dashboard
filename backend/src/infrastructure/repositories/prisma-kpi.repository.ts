@@ -78,7 +78,6 @@ export class PrismaKpiRepository implements IKpiRepository {
         onTimeDeliveryRate: Number(data.on_time_delivery_rate) || 0,
       };
     } catch (error) {
-      console.error('Error in getKpis:', error);
       throw error;
     }
   }
@@ -106,7 +105,6 @@ export class PrismaKpiRepository implements IKpiRepository {
         orders: Number(row.orders) || 0,
       }));
     } catch (error) {
-      console.error('Error in getRevenueTrend:', error);
       return [];
     }
   }
@@ -116,7 +114,6 @@ export class PrismaKpiRepository implements IKpiRepository {
 
     const orderBy = metric === 'gmv' ? 'gmv' : 'revenue';
 
-    // Usar la misma consulta que funciona en PostgreSQL
     const query = `
       SELECT 
         p.product_id as "productId",
@@ -133,19 +130,10 @@ export class PrismaKpiRepository implements IKpiRepository {
       LIMIT $3
     `;
 
-    console.log('Executing top products query:', { 
-      startDate: startDate.toISOString(), 
-      endDate: endDate.toISOString(), 
-      metric, 
-      limit 
-    });
-
     try {
       const result = await this.prisma.$queryRawUnsafe(query, startDate, endDate, limit);
-      console.log('Query result rows:', result);
       
       if (!result || (result as any[]).length === 0) {
-        console.log('No results found for top products');
         return [];
       }
 
@@ -157,7 +145,6 @@ export class PrismaKpiRepository implements IKpiRepository {
         orders: Number(row.orders) || 0,
       }));
     } catch (error) {
-      console.error('Error in getTopProducts:', error);
       return [];
     }
   }

@@ -2,7 +2,6 @@ import { GetKpisUseCase } from '../../src/application/use-cases/get-kpis.use-cas
 import { IKpiRepository } from '../../src/domain/ports/kpi-repository.interface';
 import { FilterParams, KPI } from '../../src/domain/entities/kpi.entity';
 
-// Mock del repositorio
 class MockKpiRepository implements IKpiRepository {
   async getKpis(filters: FilterParams): Promise<KPI> {
     return {

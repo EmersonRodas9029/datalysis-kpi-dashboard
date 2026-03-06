@@ -1,9 +1,6 @@
-// IMPORTANTE: Los mocks deben estar antes de cualquier importación
 jest.mock('@prisma/client', () => {
   const mockPrismaClient = {
     $queryRawUnsafe: jest.fn().mockImplementation((query, ...params) => {
-      console.log('Mock query:', query);
-      // Devolver datos mock según la consulta
       if (query.includes('kpi_data')) {
         return Promise.resolve([{
           total_orders: 53775,
@@ -49,14 +46,12 @@ jest.mock('@prisma/client', () => {
   };
 });
 
-// Ahora importamos los módulos
 import request from 'supertest';
 import express from 'express';
 import cors from 'cors';
 import routes from '../../src/adapters/http/routes';
 import { errorHandler } from '../../src/adapters/middleware/validation.middleware';
 
-// Crear app para testing
 const app = express();
 app.use(cors());
 app.use(express.json());

@@ -2,7 +2,6 @@ import { GetRevenueTrendUseCase } from '../../src/application/use-cases/get-reve
 import { IKpiRepository } from '../../src/domain/ports/kpi-repository.interface';
 import { FilterParams } from '../../src/domain/entities/kpi.entity';
 
-// Mock del repositorio
 class MockKpiRepository implements IKpiRepository {
   async getKpis(filters: FilterParams): Promise<any> {
     return {};

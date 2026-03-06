@@ -86,8 +86,6 @@ export class KpiController {
   }
 
   private handleError(error: any, res: Response): void {
-    console.error('Controller error:', error);
-    
     if (error.message?.includes('required')) {
       res.status(400).json({ error: error.message });
     } else if (error.message?.includes('Date range')) {
