@@ -22,7 +22,6 @@ export default function Home() {
     grain: 'month',
   });
 
-  // Calcular tendencias
   const previousPeriodRevenue = trendData && trendData.length > 0 
     ? trendData[Math.floor(trendData.length / 2)].revenue 
     : 0;
