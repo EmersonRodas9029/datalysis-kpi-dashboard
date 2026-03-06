@@ -34,7 +34,6 @@ services:
       PORT: 4000
       DATABASE_URL: postgresql://${DB_USER:-kpi_user}:${DB_PASSWORD:-kpi_password}@postgres:5432/${DB_NAME:-kpi_dashboard}?schema=gold
     volumes:
-      # Solo montar el código fuente, no node_modules
       - ./backend/src:/app/src
       - ./backend/server.ts:/app/server.ts
       - ./backend/package.json:/app/package.json

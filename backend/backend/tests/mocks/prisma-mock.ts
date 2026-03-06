@@ -1,7 +1,5 @@
-// Mock de PrismaClient para tests de integración
 export const mockPrismaClient = {
   $queryRawUnsafe: jest.fn().mockImplementation((query, ...params) => {
-    // Devolver datos mock según la consulta
     if (query.includes('kpi_data')) {
       return Promise.resolve([{
         total_orders: 53775,
@@ -42,7 +40,6 @@ export const mockPrismaClient = {
   $disconnect: jest.fn(),
 };
 
-// Mock del módulo prisma-client
 jest.mock('../../src/infrastructure/database/prisma-client', () => ({
   __esModule: true,
   default: mockPrismaClient,

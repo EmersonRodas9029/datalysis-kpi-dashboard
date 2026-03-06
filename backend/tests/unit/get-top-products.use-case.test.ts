@@ -2,7 +2,6 @@ import { GetTopProductsUseCase } from '../../src/application/use-cases/get-top-p
 import { IKpiRepository } from '../../src/domain/ports/kpi-repository.interface';
 import { FilterParams } from '../../src/domain/entities/kpi.entity';
 
-// Mock del repositorio
 class MockKpiRepository implements IKpiRepository {
   async getKpis(filters: FilterParams): Promise<any> {
     return {};
@@ -80,7 +79,7 @@ describe('GetTopProductsUseCase', () => {
     };
 
     const result = await useCase.execute(filters, 'gmv', 2);
-    expect(result.length).toBe(3); // Mock siempre devuelve 3, pero el use case pasa el limit al repo
+    expect(result.length).toBe(3);
   });
 
   it('should throw error for invalid limit', async () => {

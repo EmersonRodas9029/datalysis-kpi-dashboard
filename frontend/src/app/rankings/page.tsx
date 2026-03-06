@@ -57,7 +57,6 @@ export default function RankingsPage() {
           </div>
           
           <div className="col-span-3 space-y-6">
-            {/* Metric selector */}
             <Card className="glass-card">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -92,7 +91,6 @@ export default function RankingsPage() {
               </CardContent>
             </Card>
 
-            {/* Chart */}
             <div className="chart-container">
               <TopProductsChart
                 data={products || []}
@@ -101,7 +99,6 @@ export default function RankingsPage() {
               />
             </div>
 
-            {/* Product table */}
             <Card className="glass-card overflow-hidden">
               <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent">
                 <CardTitle className="flex items-center gap-2">

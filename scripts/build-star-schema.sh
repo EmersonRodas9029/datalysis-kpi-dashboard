@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Colores para output
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
@@ -10,22 +9,20 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 
 echo -e "${CYAN}================================${NC}"
-echo -e "${CYAN}⭐ Construyendo Star Schema en gold${NC}"
+echo -e "${CYAN} Construyendo Star Schema en gold${NC}"
 echo -e "${CYAN}================================${NC}"
 
 DB_CONTAINER="kpi-db"
 DB_USER="kpi_user"
 DB_NAME="kpi_dashboard"
 
-# Verificar conexión
-echo -e "${YELLOW}🔍 Verificando conexión a PostgreSQL...${NC}"
+echo -e "${YELLOW} Verificando conexión a PostgreSQL...${NC}"
 if ! docker exec $DB_CONTAINER pg_isready -U $DB_USER > /dev/null 2>&1; then
-    echo -e "${RED}❌ Error: PostgreSQL no está corriendo${NC}"
+    echo -e "${RED} Error: PostgreSQL no está corriendo${NC}"
     exit 1
 fi
-echo -e "${GREEN}✅ PostgreSQL conectado${NC}\n"
+echo -e "${GREEN} PostgreSQL conectado${NC}\n"
 
-# Función para ejecutar SQL y mostrar resultado
 execute_sql() {
     local description=$1
     local sql=$2
@@ -35,11 +32,9 @@ execute_sql() {
     echo ""
 }
 
-# 1. Generar dimensión fecha (calendario)
-echo -e "${BLUE}📅 Generando dim_date...${NC}"
+echo -e "${BLUE} Generando dim_date...${NC}"
 execute_sql "Truncando gold.dim_date" "TRUNCATE TABLE gold.dim_date CASCADE;"
 
-# Determinar rango de fechas desde los datos
 DATE_RANGE=$(docker exec -i $DB_CONTAINER psql -U $DB_USER -d $DB_NAME -t -c "
 SELECT 
     MIN(order_purchase_timestamp)::DATE as min_date,
@@ -50,9 +45,8 @@ FROM clean.orders;
 MIN_DATE=$(echo $DATE_RANGE | cut -d'|' -f1 | xargs)
 MAX_DATE=$(echo $DATE_RANGE | cut -d'|' -f2 | xargs)
 
-echo -e "${GREEN}  📆 Rango de fechas: $MIN_DATE a $MAX_DATE${NC}"
+echo -e "${GREEN}   Rango de fechas: $MIN_DATE a $MAX_DATE${NC}"
 
-# Generar dimensión fecha
 execute_sql "Insertando en gold.dim_date" "
 INSERT INTO gold.dim_date (full_date, year, quarter, month, month_name, week, day_of_week, day_name, is_weekend)
 SELECT 
@@ -69,8 +63,7 @@ FROM generate_series('$MIN_DATE'::DATE, '$MAX_DATE'::DATE, '1 day'::INTERVAL) AS
 ON CONFLICT (full_date) DO NOTHING;
 "
 
-# 2. Construir dim_customer
-echo -e "${BLUE}👤 Construyendo dim_customer...${NC}"
+echo -e "${BLUE} Construyendo dim_customer...${NC}"
 execute_sql "Truncando gold.dim_customer" "TRUNCATE TABLE gold.dim_customer CASCADE;"
 
 execute_sql "Insertando en gold.dim_customer" "
@@ -92,8 +85,7 @@ WHERE customer_id IS NOT NULL
 ON CONFLICT (customer_id) DO NOTHING;
 "
 
-# 3. Construir dim_product
-echo -e "${BLUE}📦 Construyendo dim_product...${NC}"
+echo -e "${BLUE} Construyendo dim_product...${NC}"
 execute_sql "Truncando gold.dim_product" "TRUNCATE TABLE gold.dim_product CASCADE;"
 
 execute_sql "Insertando en gold.dim_product" "
@@ -119,8 +111,7 @@ WHERE product_id IS NOT NULL
 ON CONFLICT (product_id) DO NOTHING;
 "
 
-# 4. Construir dim_order (AHORA CON CUSTOMER_ID)
-echo -e "${BLUE}📋 Construyendo dim_order...${NC}"
+echo -e "${BLUE} Construyendo dim_order...${NC}"
 execute_sql "Truncando gold.dim_order" "TRUNCATE TABLE gold.dim_order CASCADE;"
 
 execute_sql "Insertando en gold.dim_order" "
@@ -160,11 +151,9 @@ WHERE o.order_id IS NOT NULL
 ON CONFLICT (order_id) DO NOTHING;
 "
 
-# 5. Construir fact_sales (con payment_value prorrateado)
-echo -e "${BLUE}💰 Construyendo fact_sales con payment prorrateado...${NC}"
+echo -e "${BLUE} Construyendo fact_sales con payment prorrateado...${NC}"
 execute_sql "Truncando gold.fact_sales" "TRUNCATE TABLE gold.fact_sales;"
 
-# Calcular totales por orden para prorrateo
 execute_sql "Insertando en gold.fact_sales" "
 WITH order_totals AS (
     SELECT 
@@ -192,7 +181,6 @@ item_payment_allocation AS (
         ot.total_item_price,
         ot.total_freight,
         opt.total_payment,
-        -- Prorratear payment_value basado en el precio del item
         CASE 
             WHEN ot.total_item_price > 0 
             THEN ROUND((oi.price * (opt.total_payment / ot.total_item_price))::numeric, 2)
@@ -228,7 +216,6 @@ SELECT
     ipa.freight_value,
     ipa.total_payment as total_order_value,
     ipa.allocated_payment as payment_value_allocated,
-    -- Flags para KPIs
     CASE WHEN dim_order.order_status IN ('canceled', 'unavailable') THEN TRUE ELSE FALSE END as is_canceled,
     CASE WHEN dim_order.order_delivered_customer_date IS NOT NULL THEN TRUE ELSE FALSE END as is_delivered,
     CASE 
@@ -243,9 +230,8 @@ JOIN gold.dim_product dim_product ON ipa.product_id = dim_product.product_id
 LEFT JOIN gold.dim_date dim_date ON dim_date.full_date = ipa.shipping_limit_date::DATE;
 "
 
-# Verificar resultados
 echo -e "${CYAN}================================${NC}"
-echo -e "${CYAN}📊 Verificando Star Schema${NC}"
+echo -e "${CYAN} Verificando Star Schema${NC}"
 echo -e "${CYAN}================================${NC}"
 
 execute_sql "Total en dim_date" "SELECT COUNT(*) as total_dates FROM gold.dim_date;"
@@ -254,8 +240,7 @@ execute_sql "Total en dim_product" "SELECT COUNT(*) as total_products FROM gold.
 execute_sql "Total en dim_order" "SELECT COUNT(*) as total_orders FROM gold.dim_order;"
 execute_sql "Total en fact_sales (items)" "SELECT COUNT(*) as total_fact_rows FROM gold.fact_sales;"
 
-# Mostrar estadísticas de fact_sales
-echo -e "${YELLOW}📈 Estadísticas de fact_sales:${NC}"
+echo -e "${YELLOW} Estadísticas de fact_sales:${NC}"
 docker exec -i $DB_CONTAINER psql -U $DB_USER -d $DB_NAME -c "
 SELECT 
     COUNT(DISTINCT order_id) as unique_orders,
@@ -268,8 +253,7 @@ SELECT
 FROM gold.fact_sales;
 "
 
-# Verificar que el prorrateo funciona
-echo -e "${YELLOW}💰 Verificando prorrateo de pagos:${NC}"
+echo -e "${YELLOW} Verificando prorrateo de pagos:${NC}"
 docker exec -i $DB_CONTAINER psql -U $DB_USER -d $DB_NAME -c "
 SELECT 
     'Total pagos original' as concepto,
@@ -283,5 +267,5 @@ FROM gold.fact_sales;
 "
 
 echo -e "${GREEN}================================${NC}"
-echo -e "${GREEN}✅ Star Schema construido exitosamente${NC}"
+echo -e "${GREEN}Star Schema construido exitosamente${NC}"
 echo -e "${GREEN}================================${NC}"

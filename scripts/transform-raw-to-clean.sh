@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Colores para output
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
@@ -9,33 +8,30 @@ PURPLE='\033[0;35m'
 NC='\033[0m'
 
 echo -e "${PURPLE}================================${NC}"
-echo -e "${PURPLE}🧹 Transformando raw → clean${NC}"
+echo -e "${PURPLE}Transformando raw -> clean${NC}"
 echo -e "${PURPLE}================================${NC}"
 
 DB_CONTAINER="kpi-db"
 DB_USER="kpi_user"
 DB_NAME="kpi_dashboard"
 
-# Verificar conexión
-echo -e "${YELLOW}🔍 Verificando conexión a PostgreSQL...${NC}"
+echo -e "${YELLOW}Verificando conexion a PostgreSQL...${NC}"
 if ! docker exec $DB_CONTAINER pg_isready -U $DB_USER > /dev/null 2>&1; then
-    echo -e "${RED}❌ Error: PostgreSQL no está corriendo${NC}"
+    echo -e "${RED}Error: PostgreSQL no esta corriendo${NC}"
     exit 1
 fi
-echo -e "${GREEN}✅ PostgreSQL conectado${NC}\n"
+echo -e "${GREEN}PostgreSQL conectado${NC}\n"
 
-# Función para ejecutar SQL y mostrar resultado
 execute_sql() {
     local description=$1
     local sql=$2
     
-    echo -e "${YELLOW}📌 $description${NC}"
+    echo -e "${YELLOW}$description${NC}"
     docker exec -i $DB_CONTAINER psql -U $DB_USER -d $DB_NAME -c "$sql"
     echo ""
 }
 
-# 1. Limpiar customers
-echo -e "${BLUE}👤 Transformando customers...${NC}"
+echo -e "${BLUE}Transformando customers...${NC}"
 execute_sql "Truncando clean.customers" "TRUNCATE TABLE clean.customers CASCADE;"
 
 execute_sql "Insertando datos limpios en clean.customers" "
@@ -56,8 +52,7 @@ FROM raw.customers
 WHERE customer_id IS NOT NULL;
 "
 
-# 2. Limpiar sellers
-echo -e "${BLUE}🏪 Transformando sellers...${NC}"
+echo -e "${BLUE}Transformando sellers...${NC}"
 execute_sql "Truncando clean.sellers" "TRUNCATE TABLE clean.sellers CASCADE;"
 
 execute_sql "Insertando datos limpios en clean.sellers" "
@@ -76,8 +71,7 @@ FROM raw.sellers
 WHERE seller_id IS NOT NULL;
 "
 
-# 3. Limpiar products con traducción de categorías
-echo -e "${BLUE}📦 Transformando products...${NC}"
+echo -e "${BLUE}Transformando products...${NC}"
 execute_sql "Truncando clean.products" "TRUNCATE TABLE clean.products CASCADE;"
 
 execute_sql "Insertando datos limpios en clean.products" "
@@ -109,12 +103,10 @@ LEFT JOIN raw.product_category_name_translation t ON p.product_category_name = t
 WHERE p.product_id IS NOT NULL;
 "
 
-# 4. Limpiar orders (versión corregida - sin TRIM en timestamps)
-echo -e "${BLUE}📋 Transformando orders...${NC}"
+echo -e "${BLUE}Transformando orders...${NC}"
 execute_sql "Truncando clean.orders" "TRUNCATE TABLE clean.orders CASCADE;"
 
-# Primero, verificar qué valores hay en las columnas de fecha
-echo -e "${YELLOW}🔍 Diagnosticando valores de fecha en raw.orders...${NC}"
+echo -e "${YELLOW}Diagnosticando valores de fecha en raw.orders...${NC}"
 docker exec -i $DB_CONTAINER psql -U $DB_USER -d $DB_NAME -c "
 SELECT 
     'order_approved_at' as columna,
@@ -138,7 +130,7 @@ SELECT
 FROM raw.orders;
 "
 
-execute_sql "Insertando datos limpios en clean.orders (versión corregida)" "
+execute_sql "Insertando datos limpios en clean.orders" "
 INSERT INTO clean.orders (
     order_id,
     customer_id,
@@ -162,8 +154,7 @@ FROM raw.orders
 WHERE order_id IS NOT NULL;
 "
 
-# 5. Limpiar order_items
-echo -e "${BLUE}🛒 Transformando order_items...${NC}"
+echo -e "${BLUE}Transformando order_items...${NC}"
 execute_sql "Truncando clean.order_items" "TRUNCATE TABLE clean.order_items CASCADE;"
 
 execute_sql "Insertando datos limpios en clean.order_items" "
@@ -188,8 +179,7 @@ FROM raw.order_items
 WHERE order_id IS NOT NULL AND order_item_id IS NOT NULL;
 "
 
-# 6. Limpiar order_payments
-echo -e "${BLUE}💳 Transformando order_payments...${NC}"
+echo -e "${BLUE}Transformando order_payments...${NC}"
 execute_sql "Truncando clean.order_payments" "TRUNCATE TABLE clean.order_payments CASCADE;"
 
 execute_sql "Insertando datos limpios en clean.order_payments" "
@@ -210,20 +200,18 @@ FROM raw.order_payments
 WHERE order_id IS NOT NULL;
 "
 
-# Mostrar resumen de transformaciones
 echo -e "${PURPLE}================================${NC}"
-echo -e "${PURPLE}📊 Resumen de transformaciones${NC}"
+echo -e "${PURPLE}Resumen de transformaciones${NC}"
 echo -e "${PURPLE}================================${NC}"
 
 execute_sql "Clientes limpios" "SELECT COUNT(*) as total_clean_customers FROM clean.customers;"
 execute_sql "Vendedores limpios" "SELECT COUNT(*) as total_clean_sellers FROM clean.sellers;"
 execute_sql "Productos limpios" "SELECT COUNT(*) as total_clean_products FROM clean.products;"
-execute_sql "Órdenes limpias" "SELECT COUNT(*) as total_clean_orders FROM clean.orders;"
+execute_sql "Ordenes limpias" "SELECT COUNT(*) as total_clean_orders FROM clean.orders;"
 execute_sql "Items limpios" "SELECT COUNT(*) as total_clean_order_items FROM clean.order_items;"
 execute_sql "Pagos limpios" "SELECT COUNT(*) as total_clean_order_payments FROM clean.order_payments;"
 
-# Verificar distribución de status de órdenes
-echo -e "${YELLOW}📊 Distribución de order_status en clean:${NC}"
+echo -e "${YELLOW}Distribucion de order_status en clean:${NC}"
 docker exec -i $DB_CONTAINER psql -U $DB_USER -d $DB_NAME -c "
 SELECT 
     order_status,
@@ -234,31 +222,29 @@ GROUP BY order_status
 ORDER BY cantidad DESC;
 "
 
-# Verificar integridad después de limpieza
 echo -e "${PURPLE}================================${NC}"
-echo -e "${PURPLE}🔍 Verificando integridad en clean${NC}"
+echo -e "${PURPLE}Verificando integridad en clean${NC}"
 echo -e "${PURPLE}================================${NC}"
 
-execute_sql "Órdenes con customer válido" "
+execute_sql "Ordenes con customer valido" "
 SELECT COUNT(*) as orders_with_valid_customer
 FROM clean.orders o
 JOIN clean.customers c ON o.customer_id = c.customer_id;
 "
 
-execute_sql "Items con producto válido" "
+execute_sql "Items con producto valido" "
 SELECT COUNT(*) as items_with_valid_product
 FROM clean.order_items oi
 JOIN clean.products p ON oi.product_id = p.product_id;
 "
 
-execute_sql "Items con vendedor válido" "
+execute_sql "Items con vendedor valido" "
 SELECT COUNT(*) as items_with_valid_seller
 FROM clean.order_items oi
 JOIN clean.sellers s ON oi.seller_id = s.seller_id;
 "
 
-# Verificar fechas nulas
-echo -e "${YELLOW}📅 Verificando fechas nulas en orders:${NC}"
+echo -e "${YELLOW}Verificando fechas nulas en orders:${NC}"
 docker exec -i $DB_CONTAINER psql -U $DB_USER -d $DB_NAME -c "
 SELECT 
     COUNT(*) as total_orders,
@@ -269,5 +255,5 @@ FROM clean.orders;
 "
 
 echo -e "${GREEN}================================${NC}"
-echo -e "${GREEN}✅ Transformación raw → clean completada${NC}"
-echo -e "${GREEN}================================${NC}"
+echo -e "${GREEN}Transformacion raw -> clean completada${NC}"
+echo -e "${GREEN}================================${NC}

@@ -23,8 +23,6 @@ export const validateQuery = (schema: AnyZodObject) => {
 };
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error('Error:', err);
-  
   if (err.message?.includes('required')) {
     res.status(400).json({ error: err.message });
   } else {
