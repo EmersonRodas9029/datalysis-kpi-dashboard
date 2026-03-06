@@ -8,23 +8,23 @@ RUN apk add --no-cache openssl
 # Copiar package.json y package-lock.json
 COPY backend/package*.json ./
 
-# Instalar dependencias (sin postinstall)
-RUN npm install --ignore-scripts
-
-# Instalar Prisma globalmente
-RUN npm install -g prisma
+# Instalar dependencias
+RUN npm install
 
 # Crear la estructura de directorios para Prisma
 RUN mkdir -p src/infrastructure/database/prisma
 
-# Copiar el schema de Prisma
-COPY backend/src/infrastructure/database/prisma/schema.prisma ./src/infrastructure/database/prisma/
-
-# Generar Prisma Client
-RUN npx prisma generate --schema=./src/infrastructure/database/prisma/schema.prisma
-
-# Copiar el resto del código fuente
+# Copiar el código fuente primero (para incluir el schema)
 COPY backend/ .
+
+# Verificar que el schema existe y generar Prisma Client
+RUN if [ -f src/infrastructure/database/prisma/schema.prisma ]; then \
+        echo "✅ Schema encontrado, generando Prisma Client..."; \
+        npx prisma generate --schema=src/infrastructure/database/prisma/schema.prisma; \
+    else \
+        echo "❌ Error: No se encuentra el schema"; \
+        exit 1; \
+    fi
 
 # Copiar entrypoint
 COPY docker/backend/entrypoint.sh /entrypoint.sh
