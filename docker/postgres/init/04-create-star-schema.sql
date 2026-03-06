@@ -111,7 +111,7 @@ CREATE INDEX IF NOT EXISTS idx_dim_order_customer ON gold.dim_order(customer_id)
 CREATE INDEX IF NOT EXISTS idx_dim_order_purchase_date ON gold.dim_order(purchase_date_sk);
 CREATE INDEX IF NOT EXISTS idx_dim_order_status ON gold.dim_order(order_status);
 
--- Crear función para generar dimensión fecha (CORREGIDA)
+-- Crear función para generar dimensión fecha
 CREATE OR REPLACE FUNCTION gold.generate_date_dimension(start_date DATE, end_date DATE)
 RETURNS VOID AS $$
 DECLARE

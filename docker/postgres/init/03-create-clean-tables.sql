@@ -95,5 +95,5 @@ CREATE INDEX IF NOT EXISTS idx_clean_order_payments_order ON clean.order_payment
 -- Mensaje de confirmación
 DO $$
 BEGIN
-    RAISE NOTICE '✅ Tablas clean creadas correctamente';
+    RAISE NOTICE 'Tablas clean creadas correctamente';
 END $$;
