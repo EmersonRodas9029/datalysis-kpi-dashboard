@@ -16,6 +16,7 @@
     <a href="#-stack-tecnológico">
       <img src="https://img.shields.io/badge/⚡_STACK_TECNOLÓGICO-EF4444?style=for-the-badge" />
     </a>
+    <img src="https://img.shields.io/badge/Prueba_Técnica-Completada-success?style=for-the-badge" />
   </p>
   <br>
 
@@ -114,6 +115,23 @@
   </tr>
 </table>
 
+
+📦 Estructura de Contenedores Docker
+
+┌─────────────────────────────────────────────────────────────┐
+│                     Docker Compose                          │
+├─────────────────────────────────────────────────────────────┤
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
+│  │   Frontend   │  │   Backend    │  │  PostgreSQL  │       │
+│  │   Node 18    │◀─┤   Node 18    │──┤    Port      │       │
+│  │   Port 3000  │  │   Port 4000  │  │    5433      │       │
+│  └──────────────┘  └──────────────┘  └──────────────┘       │
+│         │                 │                 │               │
+│         └─────────────────┴─────────────────┘               │
+│                    Red: dashboard-network                   │
+└─────────────────────────────────────────────────────────────┘
+
+
 ##  Pipeline de Datos ETL
 
 <p align="center">
@@ -204,7 +222,19 @@ Health Check
 
 </b> Prorrateo proporcional al precio del item.</p> <p><b>Implementación:</b></p> <pre><code>allocated_payment = item_price * (total_order_payment / total_item_price)</code></pre> <p><b>Resultado:</b> 112,647 registros con diferencia de solo 1.02% vs pagos originales.</p> </details>
 
-
+<details>
+<summary><b> Grano de la Tabla de Hechos (fact_sales)</b> (click para expandir)</summary>
+<br>
+<p><b>Problema:</b> Necesidad de analizar tanto a nivel de orden (AOV) como a nivel de producto (rankings, categorías) sin perder detalle.</p>
+<p><b>Solución:</b> Definir el grano más atómico posible: <b>1 fila por ítem de orden</b> (<code>order_id</code> + <code>order_item_id</code>).</p>
+<p><b>Beneficios:</b></p>
+<ul>
+ <li> Máxima flexibilidad analítica (agregaciones por orden, producto, categoría, vendedor).</li>
+ <li> Permite el cálculo exacto de "Items per Order".</li>
+ <li> Facilita el prorrateo de pagos de forma proporcional al precio del ítem.</li>
+</ul>
+<p><b>Trade-off:</b> La tabla de hechos es más grande (~112k filas vs ~99k si fuera por orden), pero el rendimiento se mantiene gracias a los índices y es la práctica correcta en modelado dimensional.</p>
+</details>
 
  LICENCIA
 
