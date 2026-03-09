@@ -10,11 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { Trophy, TrendingUp, DollarSign, Medal } from 'lucide-react';
+import { TopProduct } from '@/types/kpi.types';
 
 export default function RankingsPage() {
   const { filters, dateRange, updateDateRange, updateFilter, clearFilters } = useFilters();
   const [metric, setMetric] = useState<'gmv' | 'revenue'>('gmv');
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState<number>(10);
 
   const { data: products, isLoading } = useTopProducts({
     ...filters,
@@ -22,13 +23,17 @@ export default function RankingsPage() {
     limit,
   });
 
-  const getMedalColor = (index: number) => {
+  const getMedalColor = (index: number): string => {
     switch(index) {
       case 0: return 'text-yellow-500';
       case 1: return 'text-gray-400';
       case 2: return 'text-amber-600';
       default: return 'text-gray-300';
     }
+  };
+
+  const cn = (...classes: (string | boolean | undefined)[]): string => {
+    return classes.filter(Boolean).join(' ');
   };
 
   return (
@@ -120,7 +125,7 @@ export default function RankingsPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y">
-                      {products?.map((product, index) => (
+                      {products?.map((product: TopProduct, index: number) => (
                         <tr 
                           key={product.productId} 
                           className="group hover:bg-gray-50/50 transition-colors"
@@ -169,8 +174,4 @@ export default function RankingsPage() {
       </div>
     </DashboardLayout>
   );
-}
-
-function cn(...classes: any[]) {
-  return classes.filter(Boolean).join(' ');
 }

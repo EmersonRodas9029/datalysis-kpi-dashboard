@@ -9,6 +9,7 @@ import { useFilters } from '@/hooks/useFilters';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatNumber } from '@/lib/utils';
+import { TopProduct } from '@/types/kpi.types';
 
 export default function ProductsPage() {
   const { filters, dateRange, updateDateRange } = useFilters();
@@ -103,7 +104,7 @@ export default function ProductsPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {products?.map((product) => (
+                      {products?.map((product: TopProduct) => (
                         <tr key={product.productId} className="border-b">
                           <td className="py-2 font-mono text-sm">
                             {product.productId.substring(0, 12)}...
