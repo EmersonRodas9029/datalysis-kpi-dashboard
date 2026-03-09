@@ -1,406 +1,235 @@
-# 📊 Commercial KPI Dashboard
-
+📊 Commercial KPI Dashboard
 <div align="center">
-  
-  ![Next.js](https://img.shields.io/badge/Next.js-14.0.3-000000?style=for-the-badge&logo=next.js&logoColor=white)
-  ![Node.js](https://img.shields.io/badge/Node.js-18.x-339933?style=for-the-badge&logo=node.js&logoColor=white)
-  ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-  ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-  ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-  ![Prisma](https://img.shields.io/badge/Prisma-5.x-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
-  
-  <h3>🚀 Dashboard Analítico para E-commerce | 100k+ Órdenes | Tiempo Real</h3>
-  
-  [📋 Descripción](#-descripción-general) • 
-  [🏗️ Arquitectura](#️-arquitectura) • 
-  [⚡ Inicio Rápido](#-inicio-rápido) • 
-  [📊 KPIs](#-kpis-implementados) • 
-  [🔧 Stack](#-tecnologías-utilizadas)
-  
-  <br>
-  
-  <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-  
-</div>
+https://img.shields.io/badge/Next.js-14.0.3-000000?style=for-the-badge&logo=next.js&logoColor=white
+https://img.shields.io/badge/Node.js-18.x-339933?style=for-the-badge&logo=node.js&logoColor=white
+https://img.shields.io/badge/PostgreSQL-15-316192?style=for-the-badge&logo=postgresql&logoColor=white
+https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
+https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white
 
-## 🌟 Descripción General
-
-Dashboard comercial de alto rendimiento construido con **Next.js 14**, **Node.js** y **PostgreSQL** que transforma el dataset público de Olist (e-commerce brasileño con +100k órdenes) en una herramienta de análisis en tiempo real.
-
-### ✨ Características Destacadas
-
-<div align="center">
-  <table>
-    <tr>
-      <td align="center">📈</td>
-      <td><b>7 KPIs</b> en tiempo real con actualización dinámica</td>
-      <td align="center">🏆</td>
-      <td><b>Rankings</b> de productos por GMV y Revenue</td>
-    </tr>
-    <tr>
-      <td align="center">📊</td>
-      <td><b>Tendencias</b> con granularidad diaria/semanal/mensual</td>
-      <td align="center">🔍</td>
-      <td><b>Filtros avanzados</b> por fecha, estado, categoría</td>
-    </tr>
-    <tr>
-      <td align="center">🎨</td>
-      <td><b>Glassmorphism</b> con animaciones fluidas</td>
-      <td align="center">⚡</td>
-      <td><b>Arquitectura hexagonal</b> + Esquema estrella</td>
-    </tr>
-  </table>
-</div>
-
-<br>
-
-## 🏗️ Arquitectura
-
-### Vista General del Sistema
-
-```mermaid
-graph TB
-    subgraph Frontend["🎨 Frontend (Next.js 14 - Port 3000)"]
-        A1[Pages<br/>Overview/Rankings/Trends]
-        A2[Components<br/>KPICards/Charts/Filters]
-        A3[State<br/>React Query + Hooks]
-    end
-    
-    subgraph Backend["⚙️ Backend (Node.js - Port 4000)"]
-        direction TB
-        B1[Adapters<br/>HTTP/Routes]
-        B2[Use Cases<br/>Application Layer]
-        B3[Domain<br/>Entities/Ports]
-        B4[Infrastructure<br/>Repositories/Prisma]
-        
-        B1 <--> B2 <--> B3
-        B2 <--> B4
-    end
-    
-    subgraph Database["🗄️ PostgreSQL (Port 5433)"]
-        direction LR
-        C1[(raw<br/>CSV Raw)]
-        C2[(clean<br/>Limpieza)]
-        C3[(gold<br/>Star Schema)]
-        
-        C1 --> C2 --> C3
-    end
-    
-    Frontend -->|HTTP REST| Backend
-    Backend -->|SQL| Database
-    
-    style Frontend fill:#f9f,stroke:#333,stroke-width:2px
-    style Backend fill:#bbf,stroke:#333,stroke-width:2px
-    style Database fill:#bfb,stroke:#333,stroke-width:2px
-
-🔄 Flujo de Datos ETL
-<div align="center">
-Capa	Esquema	Propósito	Tablas
-🟤 Raw	raw	Datos crudos CSV	customers, orders, items, products
-🟡 Clean	clean	Normalización	datos limpios con tipos correctos
-🟢 Gold	gold	⭐ Star Schema	fact_sales, dim_date, dim_customer, dim_product
-</div>
-
-📦 Estructura de Contenedores Docker
-
-┌─────────────────────────────────────────────────────────────┐
-│                     Docker Compose                          │
-├─────────────────────────────────────────────────────────────┤
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │   Frontend   │  │   Backend    │  │  PostgreSQL  │      │
-│  │   Node 18    │◀─┤   Node 18    │──┤    Port      │      │
-│  │   Port 3000  │  │   Port 4000  │  │    5433      │      │
-│  └──────────────┘  └──────────────┘  └──────────────┘      │
-│         │                 │                 │               │
-│         └─────────────────┴─────────────────┘               │
-│                    Red: dashboard-network                    │
-└─────────────────────────────────────────────────────────────┘
-
-🚀 Inicio Rápido
-
-📋 Prerrequisitos
-
-Node.js ≥ 18.x
-Docker ≥ 24.0
-Docker Compose ≥ 2.20
-Make (opcional)
-
-⚡ Instalación en 3 Pasos
-
-# 1. Clonar y configurar
-
-git clone https://github.com/tu-usuario/commercial-kpi-dashboard.git
-
-cd commercial-kpi-dashboard
-
-cp .env.example .env
-
-
-# 2. Descargar dataset de Olist
-
-# Colocar archivos CSV en ./data/raw/
-
-
-# 3. ¡Levantar todo con un comando!
-
-docker-compose up -d
-
-🔍 Verificar Instalación
-
-# Health check
-
-curl http://localhost:4000/api/health
-
-# Abrir dashboard
-
-open http://localhost:3000
-
-
-📊 KPIs 
-
-<div align="center">
-
-KPI	Fórmula	Descripción	Filtrable
-
-💰 GMV	SUM(item_price)	Gross Merchandise Value	✅
-
-💵 Revenue	SUM(payment_value_allocated)	Ingresos reales	✅
-
-📦 Orders	COUNT(DISTINCT order_id)	Número de órdenes	✅
-
-📈 AOV	Revenue / Orders	Average Order Value	✅
-
-🛒 Items/Order	COUNT(items) / Orders	Items por orden	✅
-
-❌ Cancel Rate	cancelled_orders / total_orders	Tasa de cancelación	✅
-
-⏱️ On-Time	delivered_on_time / delivered_total	Entregas a tiempo	✅
+<h3>Transformando 100,000+ órdenes en inteligencia de negocio actionable</h3>
+Visión General •
+Arquitectura •
+KPIs •
+Demo Rápida •
+Stack Tecnológico
 
 </div>
+🎯 Visión General
+Plataforma analítica enterprise construida sobre el dataset público de Olist, el marketplace brasileño más grande. Este dashboard transforma datos crudos de e-commerce en métricas de negocio accionables, procesando más de 100,000 órdenes con actualización en tiempo real.
 
-📡 API REST
+Valor de Negocio
+Toma de decisiones basada en datos con 7 KPIs críticos actualizados dinámicamente
 
-Endpoints Principales
+Visibilidad completa del funnel comercial desde la orden hasta la entrega
 
-# Health Check
+Detección temprana de tendencias y anomalías en el negocio
 
-GET  /api/health
+Arquitectura escalable lista para manejar millones de registros
 
-# KPIs principales con filtros
+Capacidades Clave
+Dashboard interactivo con métricas en tiempo real y visualizaciones dinámicas
 
-GET  /api/kpis?from=2024-01-01&to=2024-12-31
+Análisis multidimensional con filtros por fecha, estado de orden y categoría de producto
 
-# Tendencia de revenue
+Rankings automáticos de productos por volumen de ventas e ingresos
 
-GET  /api/trend/revenue?grain=month&from=2024-01-01&to=2024-12-31
+Tendencias temporales con granularidad configurable (diaria/semanal/mensual)
 
-# Ranking de productos
+Diseño moderno con efectos glassmorphism y animaciones fluidas
 
-GET  /api/rankings/products?metric=gmv&limit=10
+🏗️ Arquitectura del Sistema
+Diseño de Alto Nivel
+El sistema está estructurado en tres capas independientes pero interconectadas, siguiendo principios de arquitectura limpia y domain-driven design.
 
+Frontend - Capa de Presentación
 
-💾 Modelo de Datos (Esquema Estrella)
+Aplicación Next.js 14 con App Router para renderizado híbrido
 
--- Tabla de Hechos: fact_sales (112,647 registros)
-┌─────────────────┐
-│   fact_sales    │
-├─────────────────┤
-│ 🆔 fact_sales_sk│────┐
-│    order_sk     │←───┐│
-│    customer_sk  │←──┐││
-│    product_sk   │←─┐│││
-│    date_sk      │←┐││││
-│    item_price   │ │││││
-│    is_canceled  │ │││││
-└─────────────────┘ │││││
-                     ││││└───────┐
-┌─────────────────┐  │││└──────────┐
-│   dim_order     │  ││└───────────┐│
-├─────────────────┤  │└────────────┐││
-│ 🆔 order_sk     │──┘              │││
-│    order_status │                 │││
-│    purchase_date│                 │││
-└─────────────────┘                  │││
-                                     ▼▼▼
-┌─────────────────┐              ┌─────────────┐
-│  dim_customer   │              │  dim_date   │
-├─────────────────┤              ├─────────────┤
-│ 🆔 customer_sk  │──┐           │ 🆔 date_sk │
-│    customer_id  │  │           │  full_date  │
-│    customer_city│  │           │  year       │
-└─────────────────┘  │           │  month      │
-                     │           └─────────────┘
-┌─────────────────┐  │
-│   dim_product   │  │
-├─────────────────┤  │
-│ 🆔 product_sk   │──┘
-│    product_name │
-│    category     │
-└─────────────────┘
+Componentes modulares y reutilizables con TypeScript
 
-📊 Estadísticas del Dataset
+Estado gestionado mediante React Query y custom hooks
 
-<div align="center">
+Interfaz responsive con diseño glassmorphism
 
-Tabla	Registros	Tamaño	Descripción
+Backend - Capa de Negocio
 
-customers	99,441	19 MB	Clientes únicos
+API REST construida con Node.js y Express
 
-orders	99,441	32 MB	Órdenes completas
+Arquitectura hexagonal que separa dominio, aplicación e infraestructura
 
-order_items	112,650	33 MB	Items por orden
+Casos de uso independientes de frameworks y bases de datos
 
-products	32,951	6 MB	Catálogo de productos
+Validación robusta en capas de entrada
 
-fact_sales	112,647	-	Hechos analíticos
+Base de Datos - Capa de Persistencia
 
-geolocation	1,000,163	68 MB	Datos geográficos
+PostgreSQL 15 optimizado para cargas analíticas
 
-</div>
+Pipeline ETL de tres etapas: raw → clean → gold
 
+Esquema estrella para máximo rendimiento en consultas
 
-🛠️ Tecnologías Utilizadas
+Pipeline de Datos
+El proceso de transformación de datos sigue un enfoque por capas inspirado en medallion architecture:
 
-<details> <summary><b>🔧 Backend</b></summary> <br>
+Capa Bronze (Raw)
+Almacenamiento de datos crudos directamente desde los archivos CSV del dataset de Olist, preservando la información original sin modificaciones.
 
-Tecnología	Versión	Propósito
+Capa Silver (Clean)
+Normalización y limpieza de datos: corrección de tipos, manejo de nulos, estandarización de formatos y validación de integridad referencial.
 
-Node.js	18.x	Entorno de ejecución
+Capa Gold (Modelo Analítico)
+Implementación de esquema estrella con tablas de hechos y dimensiones, optimizado para consultas analíticas de alto rendimiento.
 
-Express	4.18	Framework web
+📊 Indicadores Clave
+Métricas Principales
+Volumen de Negocio
 
-TypeScript	5.x	Tipado estático
+Gross Merchandise Value: Valor bruto total de mercancía vendida
 
-Prisma	5.x	ORM + Migraciones
+Revenue: Ingresos reales después de asignación de pagos
 
-Zod	3.x	Validación
+Total de Órdenes: Volumen de transacciones completadas
 
-Jest	29.x	Testing
+Eficiencia Operativa
 
-Supertest	7.x	Testing API
+Average Order Value: Ticket promedio por orden
 
-</details><details> <summary><b>🎨 Frontend</b></summary> <br>
+Items por Orden: Densidad de productos en cada transacción
 
-Tecnología	Versión	Propósito
+Tasa de Cancelación: Porcentaje de órdenes no concretadas
 
-Next.js	14.0.3	React Framework
+Entregas a Tiempo: Proporción de entregas exitosas en plazo
 
-TypeScript	5.x	Tipado estático
+Análisis Disponibles
+Ranking de Productos
+Clasificación automática de productos por diferentes métricas de rendimiento, permitiendo identificar artículos estrella y oportunidades de mejora.
 
-Tailwind CSS	3.x	Estilos
+Tendencias Temporales
+Visualización de la evolución de métricas clave en el tiempo, con capacidad de ajustar granularidad para identificar patrones estacionales.
 
-Recharts	2.x	Gráficos
+Filtros Avanzados
+Segmentación multidimensional por rangos de fecha, estados de orden y categorías de producto para análisis específicos.
 
-React Query	3.x	Estado servidor
+🚀 Demo Rápida
+Inicio en Minutos
+Requisitos Previos
 
-Axios	1.x	HTTP Client
+Node.js versión 18 o superior
 
-Lucide	-	Iconos
+Docker y Docker Compose instalados
 
-</details><details> <summary><b>🐳 Infraestructura</b></summary> <br>
+Git para clonación del repositorio
 
-Tecnología	Versión	Propósito
+Pasos de Implementación
 
-Docker	24.0+	Contenedores
+Obtener el código fuente del repositorio y preparar la configuración base copiando el archivo de variables de entorno.
 
-Docker Compose	2.20+	Orquestación
+Descargar el dataset público de Olist y colocar los archivos CSV en la carpeta designada para datos crudos.
 
-PostgreSQL	15	Base de datos
+Ejecutar Docker Compose para levantar todos los servicios: base de datos PostgreSQL, backend Node.js y frontend Next.js.
 
-Git	-	Versionado
+Verificación
+Acceder al dashboard a través del navegador en la dirección local configurada y confirmar que los datos se cargan correctamente.
 
-</details>
+🛠️ Stack Tecnológico
+Frontend
+Next.js 14 con App Router para renderizado eficiente y rutas dinámicas
+TypeScript para tipado estático y mejor mantenibilidad
+Tailwind CSS para estilos utilitarios y diseño consistente
+Recharts para visualizaciones interactivas y responsivas
+React Query para gestión de estado del servidor y caching
+Axios para comunicación HTTP con el backend
 
+Backend
+Node.js 18 como entorno de ejecución principal
+Express para construcción de API REST estructurada
+TypeScript para seguridad de tipos en toda la capa de negocio
+Prisma ORM para acceso a base de datos tipado y migraciones
+Zod para validación de datos en tiempo de ejecución
+Jest y Supertest para testing unitario y de integración
 
-🧪 Testing
+Base de Datos
+PostgreSQL 15 optimizado para consultas analíticas complejas
+Esquema Estrella con tabla de hechos y dimensiones normalizadas
+Índices estratégicos para acelerar consultas frecuentes
+Particionamiento para manejo eficiente de grandes volúmenes
 
-<div align="center">
+Infraestructura
+Docker para contenedorización consistente
+Docker Compose para orquestación multi-servicio
+Git para control de versiones y colaboración
+Make para automatización de tareas comunes
 
-Tipo	Archivo	Tests	Cobertura
+📈 Volumen de Datos
+El sistema está probado y optimizado para manejar:
 
-✅ Unitario	get-kpis.use-case.test.ts	3	95%
+99,441 clientes únicos con historial de compras
 
-✅ Unitario	get-revenue-trend.test.ts	4	92%
+99,441 órdenes completas con detalles de transacción
 
-✅ Unitario	get-top-products.test.ts	5	94%
+112,650 items de orden con precios y cantidades
 
-🔄 Integración	kpi-api.test.ts	8	88%
+32,951 productos en catálogo con categorización
 
-Total		20	92%
+1,000,163 registros de geolocalización para análisis espacial
 
-</div>
+🔄 Flujo de Trabajo para Desarrolladores
+Entorno de Desarrollo Local
+Configuración Inicial
+Clonar repositorio y configurar variables de entorno siguiendo las plantillas provistas. Instalar dependencias tanto para frontend como backend.
 
-🎯 Decisiones Técnicas Clave
+Base de Datos
+Levantar PostgreSQL mediante Docker y ejecutar migraciones para crear el esquema. Cargar datos semilla desde los archivos CSV procesados.
 
-<details open> <summary><b>🏛️ 1. Arquitectura Hexagonal</b></summary>
+Servicios
+Iniciar backend en modo desarrollo con recarga automática. Iniciar frontend con hot reload para desarrollo iterativo.
 
-Motivación: Separación clara de responsabilidades y fácil testing.
+Testing
+Ejecutar suite completa de pruebas unitarias y de integración. Verificar cobertura y rendimiento de consultas críticas.
 
-Beneficio: Los casos de uso son independientes de frameworks y BD.
+🎯 Decisiones Estratégicas
+Arquitectura Hexagonal
+Se optó por este patrón arquitectónico para lograr una separación clara entre la lógica de negocio y los detalles de infraestructura. Esto permite:
 
-// Dominio puro - sin dependencias externas
-export interface IKpiRepository {
-  getKpis(filters: FilterParams): Promise<KPI>;
-}
+Independencia tecnológica: La lógica core no depende de frameworks o bases de datos específicas
 
-// Caso de uso - lógica de negocio
-export class GetKpisUseCase {
-  constructor(private repository: IKpiRepository) {}
-  
-  async execute(filters: FilterParams): Promise<KPI> {
-    return this.repository.getKpis(filters);
-  }
-}
+Testabilidad mejorada: Los casos de uso pueden probarse de forma aislada
 
-</details><details> <summary><b>⭐ 2. Esquema Estrella + Prorrateo</b><
-/summary>
+Mantenibilidad: Cambios en infraestructura no afectan el dominio de negocio
 
-Motivación: Optimizado para consultas analíticas con grano a nivel producto.
+Evolución natural: Facilita la incorporación de nuevos adaptadores o casos de uso
 
+Esquema Estrella para Análisis
+La decisión de implementar un modelo dimensional tipo estrella responde a:
 
-Prorrateo: Proporcional al precio para mantener consistencia.
+Rendimiento analítico: Optimizado para consultas de agregación y filtrado multidimensional
 
--- Cálculo de revenue prorrateado
-payment_value_allocated = 
-  (item_price / total_order_price) * total_payment_value
+Inteligibilidad: Modelo intuitivo para analistas de negocio
 
-Validación: Diferencia < 2% entre pagos originales y prorrateados.
+Flexibilidad: Permite añadir nuevas dimensiones sin afectar consultas existentes
 
-</details><details> <summary><b>🔐 3. Validación con Zod</b></summary>
+Consistencia: El prorrateo de pagos asegura integridad en el grano más fino
 
-Motivación: TypeScript-first, composable, excelente DX.
+Validación con Zod
+La implementación de validación en capas usando Zod proporciona:
 
-const kpiQuerySchema = z.object({
-  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  orderStatus: z.string().optional(),
-  productCategory: z.string().optional()
-});
+Seguridad de tipos: Validación que genera tipos TypeScript automáticamente
 
-</details>
+Composición: Esquemas reutilizables y combinables
 
-📁 Estructura del Proyecto
+UX mejorada: Mensajes de error claros y localizables
 
-commercial-kpi-dashboard/
-├── 📦 backend/
-│   ├── src/
-│   │   ├── domain/          # Entidades y puertos
-│   │   ├── application/      # Casos de uso
-│   │   ├── infrastructure/   # Prisma, repositorios
-│   │   └── adapters/        # HTTP, controllers
-│   └── tests/
-├── 🎨 frontend/
-│   ├── src/
-│   │   ├── app/             # Páginas (App Router)
-│   │   ├── components/      # React components
-│   │   ├── hooks/           # Custom hooks
-│   │   └── lib/             # Utilidades
-│   └── public/
-├── 🐳 docker/
-│   ├── backend/             # Dockerfile backend
-│   ├── frontend/            # Dockerfile frontend
-│   └── postgres/            # SQL inicial
-├── 📜 scripts/              # ETL scripts
-├── 📊 data/                 # CSV files
-└── 📄 docker-compose.yml
+Rendimiento: Validación eficiente sin overhead significativo
 
+📁 Organización del Proyecto
+El repositorio está estructurado para maximizar la claridad y facilitar el desarrollo colaborativo:
+
+Backend
+Organización por capas con separación entre dominio, aplicación, infraestructura y adaptadores. Los tests siguen la misma estructura para facilitar el mapeo.
+
+Frontend
+Estructura modular con páginas en App Router, componentes reutilizables, hooks personalizados y utilidades compartidas.
+
+Infraestructura
+Configuraciones Docker separadas por servicio, scripts ETL para procesamiento de datos y documentación técnica detallada.
