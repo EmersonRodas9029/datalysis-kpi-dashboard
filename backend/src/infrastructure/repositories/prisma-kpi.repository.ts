@@ -83,7 +83,31 @@ export class PrismaKpiRepository implements IKpiRepository {
   }
 
   async getRevenueTrend(filters: FilterParams, grain: 'day' | 'week' | 'month'): Promise<RevenueTrendPoint[]> {
-    const { startDate, endDate } = filters;
+    const { startDate, endDate, orderStatus, productCategory, customerState } = filters;
+
+    let whereConditions = `
+      o.order_purchase_timestamp BETWEEN $2 AND $3
+    `;
+    const params: any[] = [grain, startDate, endDate];
+    let paramIndex = 4; // Empezamos en 4 porque $1 es grain, $2 es startDate, $3 es endDate
+
+    if (orderStatus && orderStatus.length > 0) {
+      whereConditions += ` AND o.order_status = ANY($${paramIndex}::varchar[])`;
+      params.push(orderStatus);
+      paramIndex++;
+    }
+
+    if (productCategory && productCategory.length > 0) {
+      whereConditions += ` AND p.product_category_name_english = ANY($${paramIndex}::varchar[])`;
+      params.push(productCategory);
+      paramIndex++;
+    }
+
+    if (customerState && customerState.length > 0) {
+      whereConditions += ` AND c.customer_state = ANY($${paramIndex}::varchar[])`;
+      params.push(customerState);
+      paramIndex++;
+    }
 
     const query = `
       SELECT 
@@ -92,27 +116,53 @@ export class PrismaKpiRepository implements IKpiRepository {
         COUNT(DISTINCT f.order_id) as orders
       FROM gold.fact_sales f
       JOIN gold.dim_order o ON f.order_sk = o.order_sk
-      WHERE o.order_purchase_timestamp BETWEEN $2 AND $3
+      JOIN gold.dim_customer c ON f.customer_sk = c.customer_sk
+      JOIN gold.dim_product p ON f.product_sk = p.product_sk
+      WHERE ${whereConditions}
       GROUP BY DATE_TRUNC($1, o.order_purchase_timestamp)
       ORDER BY DATE_TRUNC($1, o.order_purchase_timestamp)
     `;
 
     try {
-      const result = await this.prisma.$queryRawUnsafe(query, grain, startDate, endDate);
+      const result = await this.prisma.$queryRawUnsafe(query, ...params);
       return (result as any[]).map(row => ({
         date: row.date,
         revenue: Number(row.revenue) || 0,
         orders: Number(row.orders) || 0,
       }));
     } catch (error) {
-      return [];
+      throw error; 
     }
   }
 
   async getTopProducts(filters: FilterParams, metric: 'gmv' | 'revenue', limit: number): Promise<TopProduct[]> {
-    const { startDate, endDate } = filters;
+    const { startDate, endDate, orderStatus, productCategory, customerState } = filters;
 
-    const orderBy = metric === 'gmv' ? 'gmv' : 'revenue';
+    let whereConditions = `
+      o.order_purchase_timestamp BETWEEN $1 AND $2
+    `;
+    const params: any[] = [startDate, endDate];
+    let paramIndex = 3;
+
+    if (orderStatus && orderStatus.length > 0) {
+      whereConditions += ` AND o.order_status = ANY($${paramIndex}::varchar[])`;
+      params.push(orderStatus);
+      paramIndex++;
+    }
+
+    if (productCategory && productCategory.length > 0) {
+      whereConditions += ` AND p.product_category_name_english = ANY($${paramIndex}::varchar[])`;
+      params.push(productCategory);
+      paramIndex++;
+    }
+
+    if (customerState && customerState.length > 0) {
+      whereConditions += ` AND c.customer_state = ANY($${paramIndex}::varchar[])`;
+      params.push(customerState);
+      paramIndex++;
+    }
+
+    const orderByColumn = metric === 'gmv' ? 'gmv' : 'revenue';
 
     const query = `
       SELECT 
@@ -124,14 +174,17 @@ export class PrismaKpiRepository implements IKpiRepository {
       FROM gold.fact_sales f
       JOIN gold.dim_product p ON f.product_sk = p.product_sk
       JOIN gold.dim_order o ON f.order_sk = o.order_sk
-      WHERE o.order_purchase_timestamp BETWEEN $1 AND $2
+      JOIN gold.dim_customer c ON f.customer_sk = c.customer_sk
+      WHERE ${whereConditions}
       GROUP BY p.product_id, p.product_category_name_english
-      ORDER BY ${orderBy} DESC
-      LIMIT $3
+      ORDER BY ${orderByColumn} DESC
+      LIMIT $${paramIndex}
     `;
 
+    params.push(limit);
+
     try {
-      const result = await this.prisma.$queryRawUnsafe(query, startDate, endDate, limit);
+      const result = await this.prisma.$queryRawUnsafe(query, ...params);
       
       if (!result || (result as any[]).length === 0) {
         return [];
@@ -145,7 +198,7 @@ export class PrismaKpiRepository implements IKpiRepository {
         orders: Number(row.orders) || 0,
       }));
     } catch (error) {
-      return [];
+      throw error; 
     }
   }
 }
