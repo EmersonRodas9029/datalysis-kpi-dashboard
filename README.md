@@ -1,235 +1,72 @@
 📊 Commercial KPI Dashboard
+<div align="center"> <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=30&duration=3000&pause=1000&color=6366F1&center=true&vCenter=true&width=600&lines=Dashboard+Anal%C3%ADtico+E-commerce;100%2C000%2B+%C3%93rdenes+Procesadas;Tiempo+Real+%26+Arquitectura+Escalable" alt="Typing SVG" /> <br> <p align="center"> <a href="#-visión-general"> <img src="https://img.shields.io/badge/🔭_VISIÓN_GENERAL-6366F1?style=for-the-badge" /> </a> <a href="#-arquitectura-del-sistema"> <img src="https://img.shields.io/badge/🏗️_ARQUITECTURA-10B981?style=for-the-badge" /> </a> <a href="#-kpis-en-acción"> <img src="https://img.shields.io/badge/📊_KPIS_EN_ACCIÓN-F59E0B?style=for-the-badge" /> </a> <a href="#-stack-tecnológico"> <img src="https://img.shields.io/badge/⚡_STACK_ TECNOLÓGICO-EF4444?style=for-the-badge" /> </a> </p> <br> <!-- BADGES PRINCIPALES --> <p align="center"> <img src="https://img.shields.io/badge/Next.js_14-000000?style=for-the-badge&logo=next.js&logoColor=white" /> <img src="https://img.shields.io/badge/Node.js_18-339933?style=for-the-badge&logo=node.js&logoColor=white" /> <img src="https://img.shields.io/badge/PostgreSQL_15-316192?style=for-the-badge&logo=postgresql&logoColor=white" /> <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" /> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" /> </p> <!-- CONTADORES DINÁMICOS (ESTÁTICOS EN README) --> <p align="center"> <img src="https://img.shields.io/badge/📦_99.441_CLIENTES-8B5CF6?style=flat-square" /> <img src="https://img.shields.io/badge/📈_112.650_TRANSACCIONES-EC4899?style=flat-square" /> <img src="https://img.shields.io/badge/⚡_<2s_RESPUESTA-10B981?style=flat-square" /> <img src="https://img.shields.io/badge/🧪_92%_COBERTURA-6366F1?style=flat-square" /> </p> <br> <!-- DIVISOR ANIMADO --> <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%"></div>
+🎬 DEMO INTERACTIVA
+<p align="center"> <img src="https://via.placeholder.com/800x400/6366F1/FFFFFF?text=Dashboard+Preview+-+Glassmorphism+UI" alt="Dashboard Preview" width="80%" style="border-radius: 20px; box-shadow: 0 20px 40px rgba(99,102,241,0.3);" /> </p><p align="center"> <i>✨ Interfaz con diseño glassmorphism, gráficos interactivos y actualización en tiempo real</i> </p>
+🚀 VALOR DE NEGOCIO
+<table align="center"> <tr> <td align="center" width="33%"> <img src="https://img.icons8.com/fluency/96/000000/decision.png" width="64" /> <br> <b>Decisiones Data-Driven</b> <br> <sub>7 KPIs críticos para dirección comercial</sub> </td> <td align="center" width="33%"> <img src="https://img.icons8.com/fluency/96/000000/visible.png" width="64" /> <br> <b>Visibilidad 360°</b> <br> <sub>Del checkout a la entrega final</sub> </td> <td align="center" width="33%"> <img src="https://img.icons8.com/fluency/96/000000/alarm.png" width="64" /> <br> <b>Alertas Tempranas</b> <br> <sub>Detección de tendencias y anomalías</sub> </td> </tr> </table>
+🏗️ ARQUITECTURA DEL SISTEMA
 <div align="center">
-https://img.shields.io/badge/Next.js-14.0.3-000000?style=for-the-badge&logo=next.js&logoColor=white
-https://img.shields.io/badge/Node.js-18.x-339933?style=for-the-badge&logo=node.js&logoColor=white
-https://img.shields.io/badge/PostgreSQL-15-316192?style=for-the-badge&logo=postgresql&logoColor=white
-https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
-https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white
-
-<h3>Transformando 100,000+ órdenes en inteligencia de negocio actionable</h3>
-Visión General •
-Arquitectura •
-KPIs •
-Demo Rápida •
-Stack Tecnológico
-
+🧬 Diseño Hexagonal + Esquema Estrella
+</div><table align="center"> <tr> <td width="33%" valign="top" bgcolor="#0D1117"> <h3 align="center">🎨 FRONTEND</h3> <p align="center"><i>Capa de Presentación</i></p> <ul> <li>✅ Next.js 14 App Router</li> <li>✅ Componentes modulares</li> <li>✅ React Query + Hooks</li> <li>✅ Glassmorphism UI</li> <li>✅ Responsive Design</li> </ul> </td> <td width="33%" valign="top" bgcolor="#0D1117"> <h3 align="center">⚙️ BACKEND</h3> <p align="center"><i>Capa de Negocio</i></p> <ul> <li>✅ Node.js + Express</li> <li>✅ Arquitectura Hexagonal</li> <li>✅ Casos de Uso Independientes</li> <li>✅ Validación en Capas</li> <li>✅ Tests Unitarios + Integración</li> </ul> </td> <td width="33%" valign="top" bgcolor="#0D1117"> <h3 align="center">🗄️ BASE DE DATOS</h3> <p align="center"><i>Capa de Persistencia</i></p> <ul> <li>✅ PostgreSQL 15</li> <li>✅ Pipeline ETL 3 Capas</li> <li>✅ Esquema Estrella</li> <li>✅ Índices Optimizados</li> <li>✅ Particionamiento</li> </ul> </td> </tr> </table>
+🔄 Pipeline de Datos ETL
+<p align="center"> <img src="https://via.placeholder.com/900x200/1F2937/FFFFFF?text=Bronze+→+Silver+→+Gold+:+Datos+Crudos+→+Limpieza+→+Modelo+Analítico" width="90%" style="border-radius: 10px;" /> </p>
+📊 KPIS EN ACCIÓN
+<div align="center">
+📈 7 Métricas Críticas para tu Negocio
 </div>
-🎯 Visión General
-Plataforma analítica enterprise construida sobre el dataset público de Olist, el marketplace brasileño más grande. Este dashboard transforma datos crudos de e-commerce en métricas de negocio accionables, procesando más de 100,000 órdenes con actualización en tiempo real.
-
-Valor de Negocio
-Toma de decisiones basada en datos con 7 KPIs críticos actualizados dinámicamente
-
-Visibilidad completa del funnel comercial desde la orden hasta la entrega
-
-Detección temprana de tendencias y anomalías en el negocio
-
-Arquitectura escalable lista para manejar millones de registros
-
-Capacidades Clave
-Dashboard interactivo con métricas en tiempo real y visualizaciones dinámicas
-
-Análisis multidimensional con filtros por fecha, estado de orden y categoría de producto
-
-Rankings automáticos de productos por volumen de ventas e ingresos
-
-Tendencias temporales con granularidad configurable (diaria/semanal/mensual)
-
-Diseño moderno con efectos glassmorphism y animaciones fluidas
-
-🏗️ Arquitectura del Sistema
-Diseño de Alto Nivel
-El sistema está estructurado en tres capas independientes pero interconectadas, siguiendo principios de arquitectura limpia y domain-driven design.
-
-Frontend - Capa de Presentación
-
-Aplicación Next.js 14 con App Router para renderizado híbrido
-
-Componentes modulares y reutilizables con TypeScript
-
-Estado gestionado mediante React Query y custom hooks
-
-Interfaz responsive con diseño glassmorphism
-
-Backend - Capa de Negocio
-
-API REST construida con Node.js y Express
-
-Arquitectura hexagonal que separa dominio, aplicación e infraestructura
-
-Casos de uso independientes de frameworks y bases de datos
-
-Validación robusta en capas de entrada
-
-Base de Datos - Capa de Persistencia
-
-PostgreSQL 15 optimizado para cargas analíticas
-
-Pipeline ETL de tres etapas: raw → clean → gold
-
-Esquema estrella para máximo rendimiento en consultas
-
-Pipeline de Datos
-El proceso de transformación de datos sigue un enfoque por capas inspirado en medallion architecture:
-
-Capa Bronze (Raw)
-Almacenamiento de datos crudos directamente desde los archivos CSV del dataset de Olist, preservando la información original sin modificaciones.
-
-Capa Silver (Clean)
-Normalización y limpieza de datos: corrección de tipos, manejo de nulos, estandarización de formatos y validación de integridad referencial.
-
-Capa Gold (Modelo Analítico)
-Implementación de esquema estrella con tablas de hechos y dimensiones, optimizado para consultas analíticas de alto rendimiento.
-
-📊 Indicadores Clave
-Métricas Principales
-Volumen de Negocio
-
-Gross Merchandise Value: Valor bruto total de mercancía vendida
-
-Revenue: Ingresos reales después de asignación de pagos
-
-Total de Órdenes: Volumen de transacciones completadas
-
-Eficiencia Operativa
-
-Average Order Value: Ticket promedio por orden
-
-Items por Orden: Densidad de productos en cada transacción
-
-Tasa de Cancelación: Porcentaje de órdenes no concretadas
-
-Entregas a Tiempo: Proporción de entregas exitosas en plazo
-
-Análisis Disponibles
-Ranking de Productos
-Clasificación automática de productos por diferentes métricas de rendimiento, permitiendo identificar artículos estrella y oportunidades de mejora.
-
-Tendencias Temporales
-Visualización de la evolución de métricas clave en el tiempo, con capacidad de ajustar granularidad para identificar patrones estacionales.
-
-Filtros Avanzados
-Segmentación multidimensional por rangos de fecha, estados de orden y categorías de producto para análisis específicos.
-
-🚀 Demo Rápida
-Inicio en Minutos
-Requisitos Previos
-
-Node.js versión 18 o superior
-
-Docker y Docker Compose instalados
-
-Git para clonación del repositorio
-
-Pasos de Implementación
-
-Obtener el código fuente del repositorio y preparar la configuración base copiando el archivo de variables de entorno.
-
-Descargar el dataset público de Olist y colocar los archivos CSV en la carpeta designada para datos crudos.
-
-Ejecutar Docker Compose para levantar todos los servicios: base de datos PostgreSQL, backend Node.js y frontend Next.js.
-
-Verificación
-Acceder al dashboard a través del navegador en la dirección local configurada y confirmar que los datos se cargan correctamente.
-
-🛠️ Stack Tecnológico
-Frontend
-Next.js 14 con App Router para renderizado eficiente y rutas dinámicas
-TypeScript para tipado estático y mejor mantenibilidad
-Tailwind CSS para estilos utilitarios y diseño consistente
-Recharts para visualizaciones interactivas y responsivas
-React Query para gestión de estado del servidor y caching
-Axios para comunicación HTTP con el backend
-
-Backend
-Node.js 18 como entorno de ejecución principal
-Express para construcción de API REST estructurada
-TypeScript para seguridad de tipos en toda la capa de negocio
-Prisma ORM para acceso a base de datos tipado y migraciones
-Zod para validación de datos en tiempo de ejecución
-Jest y Supertest para testing unitario y de integración
-
-Base de Datos
-PostgreSQL 15 optimizado para consultas analíticas complejas
-Esquema Estrella con tabla de hechos y dimensiones normalizadas
-Índices estratégicos para acelerar consultas frecuentes
-Particionamiento para manejo eficiente de grandes volúmenes
-
-Infraestructura
-Docker para contenedorización consistente
-Docker Compose para orquestación multi-servicio
-Git para control de versiones y colaboración
-Make para automatización de tareas comunes
-
-📈 Volumen de Datos
-El sistema está probado y optimizado para manejar:
-
-99,441 clientes únicos con historial de compras
-
-99,441 órdenes completas con detalles de transacción
-
-112,650 items de orden con precios y cantidades
-
-32,951 productos en catálogo con categorización
-
-1,000,163 registros de geolocalización para análisis espacial
-
-🔄 Flujo de Trabajo para Desarrolladores
-Entorno de Desarrollo Local
-Configuración Inicial
-Clonar repositorio y configurar variables de entorno siguiendo las plantillas provistas. Instalar dependencias tanto para frontend como backend.
-
-Base de Datos
-Levantar PostgreSQL mediante Docker y ejecutar migraciones para crear el esquema. Cargar datos semilla desde los archivos CSV procesados.
-
-Servicios
-Iniciar backend en modo desarrollo con recarga automática. Iniciar frontend con hot reload para desarrollo iterativo.
-
-Testing
-Ejecutar suite completa de pruebas unitarias y de integración. Verificar cobertura y rendimiento de consultas críticas.
-
-🎯 Decisiones Estratégicas
-Arquitectura Hexagonal
-Se optó por este patrón arquitectónico para lograr una separación clara entre la lógica de negocio y los detalles de infraestructura. Esto permite:
-
-Independencia tecnológica: La lógica core no depende de frameworks o bases de datos específicas
-
-Testabilidad mejorada: Los casos de uso pueden probarse de forma aislada
-
-Mantenibilidad: Cambios en infraestructura no afectan el dominio de negocio
-
-Evolución natural: Facilita la incorporación de nuevos adaptadores o casos de uso
-
-Esquema Estrella para Análisis
-La decisión de implementar un modelo dimensional tipo estrella responde a:
-
-Rendimiento analítico: Optimizado para consultas de agregación y filtrado multidimensional
-
-Inteligibilidad: Modelo intuitivo para analistas de negocio
-
-Flexibilidad: Permite añadir nuevas dimensiones sin afectar consultas existentes
-
-Consistencia: El prorrateo de pagos asegura integridad en el grano más fino
-
-Validación con Zod
-La implementación de validación en capas usando Zod proporciona:
-
-Seguridad de tipos: Validación que genera tipos TypeScript automáticamente
-
-Composición: Esquemas reutilizables y combinables
-
-UX mejorada: Mensajes de error claros y localizables
-
-Rendimiento: Validación eficiente sin overhead significativo
-
-📁 Organización del Proyecto
-El repositorio está estructurado para maximizar la claridad y facilitar el desarrollo colaborativo:
-
-Backend
-Organización por capas con separación entre dominio, aplicación, infraestructura y adaptadores. Los tests siguen la misma estructura para facilitar el mapeo.
-
-Frontend
-Estructura modular con páginas en App Router, componentes reutilizables, hooks personalizados y utilidades compartidas.
-
-Infraestructura
-Configuraciones Docker separadas por servicio, scripts ETL para procesamiento de datos y documentación técnica detallada.
+<table align="center"> <tr> <td width="25%" align="center" bgcolor="#1F2937" style="border-radius: 10px; padding: 20px;"> <h1>💰</h1> <h3>GMV</h3> <p><i>Gross Merchandise Value</i></p> <p><sub>Valor bruto total de mercancía</sub></p> </td> <td width="25%" align="center" bgcolor="#1F2937" style="border-radius: 10px; padding: 20px;"> <h1>💵</h1> <h3>Revenue</h3> <p><i>Ingresos Reales</i></p> <p><sub>Pagos prorrateados por item</sub></p> </td> <td width="25%" align="center" bgcolor="#1F2937" style="border-radius: 10px; padding: 20px;"> <h1>📦</h1> <h3>Órdenes</h3> <p><i>Volumen Total</i></p> <p><sub>Transacciones completadas</sub></p> </td> <td width="25%" align="center" bgcolor="#1F2937" style="border-radius: 10px; padding: 20px;"> <h1>📈</h1> <h3>AOV</h3> <p><i>Average Order Value</i></p> <p><sub>Ticket promedio</sub></p> </td> </tr> <tr> <td width="25%" align="center" bgcolor="#1F2937" style="border-radius: 10px; padding: 20px;"> <h1>🛒</h1> <h3>Items/Orden</h3> <p><i>Densidad de Compra</i></p> <p><sub>Productos por transacción</sub></p> </td> <td width="25%" align="center" bgcolor="#1F2937" style="border-radius: 10px; padding: 20px;"> <h1>❌</h1> <h3>Cancel Rate</h3> <p><i>Tasa de Cancelación</i></p> <p><sub>Órdenes no concretadas</sub></p> </td> <td width="25%" align="center" bgcolor="#1F2937" style="border-radius: 10px; padding: 20px;"> <h1>⏱️</h1> <h3>On-Time</h3> <p><i>Entregas a Tiempo</i></p> <p><sub>Logística exitosa</sub></p> </td> <td width="25%" align="center" bgcolor="#1F2937" style="border-radius: 10px; padding: 20px;"> <h1>🏆</h1> <h3>Rankings</h3> <p><i>Top Productos</i></p> <p><sub>Por GMV y Revenue</sub></p> </td> </tr> </table>
+🎛️ CAPACIDADES DEL DASHBOARD
+<div align="center">
+Característica	Descripción	Beneficio
+📱 Interactividad	Filtros dinámicos por fecha, estado, categoría	Análisis a medida
+📈 Tendencias	Granularidad diaria/semanal/mensual	Identificación de patrones
+🏅 Rankings	Top productos en tiempo real	Optimización de catálogo
+⚡ Rendimiento	Respuesta < 2 segundos en 100k+ registros	Experiencia fluida
+🎨 Diseño	Glassmorphism + Animaciones	UX moderna y atractiva
+</div>
+⚡ STACK TECNOLÓGICO
+<div align="center">
+🚀 Tecnologías de Alto Rendimiento
+</div>
+<table align="center"> <tr> <th colspan="3" bgcolor="#6366F1">🎨 FRONTEND</th> </tr> <tr> <td width="33%" align="center"><img src="https://img.shields.io/badge/Next.js_14-000000?style=for-the-badge&logo=next.js&logoColor=white" /></td> <td width="33%" align="center"><img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" /></td> <td width="33%" align="center"><img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" /></td> </tr> <tr> <td align="center"><b>Recharts</b> · Gráficos Interactivos</td> <td align="center"><b>React Query</b> · Estado Servidor</td> <td align="center"><b>Lucide</b> · Iconografía Premium</td> </tr> <tr> <th colspan="3" bgcolor="#10B981">⚙️ BACKEND</th> </tr> <tr> <td width="33%" align="center"><img src="https://img.shields.io/badge/Node.js_18-339933?style=for-the-badge&logo=node.js&logoColor=white" /></td> <td width="33%" align="center"><img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" /></td> <td width="33%" align="center"><img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" /></td> </tr> <tr> <td align="center"><b>Zod</b> · Validación Robusta</td> <td align="center"><b>Jest</b> · Testing Unitario</td> <td align="center"><b>Supertest</b> · API Testing</td> </tr> <tr> <th colspan="3" bgcolor="#EF4444">🗄️ BASE DE DATOS</th> </tr> <tr> <td width="33%" align="center"><img src="https://img.shields.io/badge/PostgreSQL_15-316192?style=for-the-badge&logo=postgresql&logoColor=white" /></td> <td width="33%" align="center"><img src="https://img.shields.io/badge/Prisma_Migrate-2D3748?style=for-the-badge&logo=prisma&logoColor=white" /></td> <td width="33%" align="center"><img src="https://img.shields.io/badge/Star_Schema-FF6B6B?style=for-the-badge" /></td> </tr> <tr> <th colspan="3" bgcolor="#2496ED">🐳 INFRAESTRUCTURA</th> </tr> <tr> <td width="33%" align="center"><img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" /></td> <td width="33%" align="center"><img src="https://img.shields.io/badge/Docker_Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white" /></td> <td width="33%" align="center"><img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" /></td> </tr> </table>
+📊 VOLUMEN DE DATOS PROCESADOS
+<div align="center">
+Entidad	Registros	Tamaño	Propósito
+Clientes	99,441	19 MB	Base de usuarios
+Órdenes	99,441	32 MB	Transacciones completas
+Items de Orden	112,650	33 MB	Detalle de compras
+Productos	32,951	6 MB	Catálogo completo
+Geolocalización	1,000,163	68 MB	Análisis espacial
+</div>
+🚀 INICIO RÁPIDO
+<div align="center">
+⚡ 3 Pasos para tu Dashboard
+</div>
+<table align="center"> <tr> <td width="33%" align="center" bgcolor="#0D1117"> <h1>1️⃣</h1> <h3>Clonar</h3> <p><code>git clone [repo-url]</code></p> <p><code>cd commercial-kpi-dashboard</code></p> </td> <td width="33%" align="center" bgcolor="#0D1117"> <h1>2️⃣</h1> <h3>Configurar</h3> <p>Descargar dataset Olist</p> <p>Colocar CSVs en ./data/raw/</p> </td> <td width="33%" align="center" bgcolor="#0D1117"> <h1>3️⃣</h1> <h3>Ejecutar</h3> <p><code>docker-compose up -d</code></p> <p><code>open http://localhost:3000</code></p> </td> </tr> </table>
+📈 MÉTRICAS DE CALIDAD
+<div align="center">
+Tipo	Tests	Cobertura	Estado
+Unitarios	12	94%	✅
+Integración	8	88%	✅
+E2E	5	85%	🚧
+Total	25	92%	🏆
+</div>
+🎯 DECISIONES ARQUITECTURALES
+<div align="center">
+🏛️ Por qué tomamos cada decisión
+</div>
+<details> <summary><b>🏗️ Arquitectura Hexagonal</b> (click para expandir)</summary> <br> <p><b>Problema:</b> Dependencia directa entre lógica de negocio y frameworks.</p> <p><b>Solución:</b> Separación en capas dominio, aplicación e infraestructura.</p> <p><b>Beneficios:</b></p> <ul> <li>✅ Independencia tecnológica</li> <li>✅ Testabilidad mejorada</li> <li>✅ Mantenibilidad a largo plazo</li> <li>✅ Evolución sin afectar dominio</li> </ul> </details><details> <summary><b>⭐ Esquema Estrella</b> (click para expandir)</summary> <br> <p><b>Problema:</b> Consultas analíticas lentas en modelo transaccional.</p> <p><b>Solución:</b> Tabla de hechos + dimensiones normalizadas.</p> <p><b>Beneficios:</b></p> <ul> <li>✅ Rendimiento en agregaciones</li> <li✅ Intuitivo para analistas</li> <li>✅ Flexibilidad dimensional</li> <li>✅ Consistencia con prorrateo</li> </ul> </details><details> <summary><b>🔐 Validación con Zod</b> (click para expandir)</summary> <br> <p><b>Problema:</b> Datos inconsistentes en runtime.</p> <p><b>Solución:</b> Validación tipada en capas de entrada.</p> <p><b>Beneficios:</b></p> <ul> <li>✅ TypeScript-first</li> <li>✅ Composición de esquemas</li> <li>✅ Mensajes de error claros</li> <li>✅ Zero overhead</li> </ul> </details>
+🤝 CONTRIBUYE
+<div align="center">
+💡 Áreas de Mejora
+Área	Descripción	Impacto
+Nuevos KPIs	Métricas de retención, LTV	Alto
+Performance	Optimización de queries	Alto
+UX	Mejoras en experiencia	Medio
+Tests	Ampliar cobertura	Medio
+<br> <a href="#"> <img src="https://img.shields.io/badge/💻_CONTRIBUIR-6366F1?style=for-the-badge" /> </a> <a href="#"> <img src="https://img.shields.io/badge/🐛_REPORTAR_BUG-EF4444?style=for-the-badge" /> </a> <a href="#"> <img src="https://img.shields.io/badge/📖_DOCUMENTACIÓN-10B981?style=for-the-badge" /> </a></div>
+📄 LICENCIA
+<div align="center">
+MIT © 2024 · Completamente open source para uso comercial
+
+<br> <br> <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%"> <br> <p> <b>Hecho con ❤️ para la comunidad data-driven</b> </p> <p> <sub>⭐ Este repositorio si te fue útil · 🐛 Issues para reportar problemas · 💡 Discussions para ideas</sub> </p></div>
