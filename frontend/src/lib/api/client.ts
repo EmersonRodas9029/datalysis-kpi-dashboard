@@ -16,7 +16,9 @@ export const apiClient = axios.create({
 
 // Interceptor para logging de peticiones
 apiClient.interceptors.request.use(request => {
-  console.log('🚀 Petición:', request.method?.toUpperCase(), request.baseURL + request.url);
+  const baseURL = request.baseURL || '';
+  const url = request.url || '';
+  console.log('🚀 Petición:', request.method?.toUpperCase(), baseURL + url);
   return request;
 });
 
@@ -27,14 +29,19 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
+    const config = error.config || {};
+    const baseURL = config.baseURL || '';
+    const url = config.url || '';
+    
     console.error('❌ Error en petición:', {
-      url: error.config?.url,
-      baseURL: error.config?.baseURL,
-      fullUrl: error.config?.baseURL + error.config?.url,
-      method: error.config?.method,
+      url: url,
+      baseURL: baseURL,
+      fullUrl: baseURL + url,
+      method: config.method?.toUpperCase(),
       status: error.response?.status,
-      data: error.response?.data
+      data: error.response?.data,
+      message: error.message
     });
     return Promise.reject(error);
   }
-);
+)

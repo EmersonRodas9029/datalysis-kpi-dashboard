@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { DateRangeFilter } from './DateRangeFilter';
 import { Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { FilterParams } from '@/types/kpi.types';
 
 interface GlobalFiltersProps {
   dateRange: { from: Date; to: Date };
@@ -12,7 +13,7 @@ interface GlobalFiltersProps {
     productCategory?: string[];
     customerState?: string[];
   };
-  onFilterChange?: (key: string, values: string[]) => void;
+  onFilterChange?: <K extends keyof FilterParams>(key: K, values: FilterParams[K]) => void;
   onClearFilters?: () => void;
 }
 
@@ -70,12 +71,20 @@ export const GlobalFilters: React.FC<GlobalFiltersProps> = ({
     customerState: filters.customerState || [],
   });
 
+  useEffect(() => {
+    setLocalFilters({
+      orderStatus: filters.orderStatus || [],
+      productCategory: filters.productCategory || [],
+      customerState: filters.customerState || [],
+    });
+  }, [filters.orderStatus, filters.productCategory, filters.customerState]);
+
   const toggleSection = (section: string) => {
     setExpandedSection(expandedSection === section ? null : section);
   };
 
-  const handleFilterChange = (key: string, value: string) => {
-    const currentValues = localFilters[key as keyof typeof localFilters] as string[];
+  const handleFilterChange = (key: 'orderStatus' | 'productCategory' | 'customerState', value: string) => {
+    const currentValues = localFilters[key] as string[];
     let newValues: string[];
     
     if (currentValues.includes(value)) {
@@ -129,7 +138,6 @@ export const GlobalFilters: React.FC<GlobalFiltersProps> = ({
         </div>
 
         <div className="space-y-4">
-          {/* Fecha - siempre visible */}
           <div>
             <button
               onClick={() => toggleSection('date')}
@@ -153,7 +161,6 @@ export const GlobalFilters: React.FC<GlobalFiltersProps> = ({
             )}
           </div>
 
-          {/* Estado de orden */}
           <div className="border-t pt-3">
             <button
               onClick={() => toggleSection('status')}
@@ -180,16 +187,12 @@ export const GlobalFilters: React.FC<GlobalFiltersProps> = ({
                       className="rounded border-gray-300 text-primary focus:ring-primary"
                     />
                     <span className="flex-1 text-sm capitalize">{status.label}</span>
-                    <span className={`text-xs px-2 py-1 rounded-full bg-${status.color}-100 text-${status.color}-700`}>
-                      {status.value}
-                    </span>
                   </label>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Categoría de producto */}
           <div className="border-t pt-3">
             <button
               onClick={() => toggleSection('category')}
@@ -222,7 +225,6 @@ export const GlobalFilters: React.FC<GlobalFiltersProps> = ({
             )}
           </div>
 
-          {/* Estado del cliente */}
           <div className="border-t pt-3">
             <button
               onClick={() => toggleSection('state')}
@@ -256,7 +258,6 @@ export const GlobalFilters: React.FC<GlobalFiltersProps> = ({
           </div>
         </div>
 
-        {/* Resumen de filtros activos */}
         {activeFiltersCount > 0 && (
           <div className="mt-4 pt-3 border-t">
             <p className="text-xs text-muted-foreground mb-2">Filtros activos:</p>
