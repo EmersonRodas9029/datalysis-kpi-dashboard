@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postgres:
     image: postgres:15-alpine
@@ -16,7 +18,7 @@ services:
     networks:
       - kpi-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kpi_user -d kpi_dashboard"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-kpi_user} -d ${DB_NAME:-kpi_dashboard}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -30,14 +32,12 @@ services:
     ports:
       - "4000:4000"
     environment:
-      NODE_ENV: ${NODE_ENV:-development}
+      NODE_ENV: ${NODE_ENV:-production}
       PORT: 4000
       DATABASE_URL: postgresql://${DB_USER:-kpi_user}:${DB_PASSWORD:-kpi_password}@postgres:5432/${DB_NAME:-kpi_dashboard}?schema=gold
     volumes:
       - ./backend/src:/app/src
       - ./backend/server.ts:/app/server.ts
-      - ./backend/package.json:/app/package.json
-      - ./backend/tsconfig.json:/app/tsconfig.json
     depends_on:
       postgres:
         condition: service_healthy
@@ -46,20 +46,17 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: ../docker/frontend/Dockerfile
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:4000}
     container_name: kpi-frontend
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
+      NODE_ENV: ${NODE_ENV:-production}
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
-    volumes:
-      - ./frontend/src:/app/src
-      - ./frontend/public:/app/public
-      - ./frontend/package.json:/app/package.json
-      - ./frontend/tsconfig.json:/app/tsconfig.json
-      - ./frontend/next.config.js:/app/next.config.js
     depends_on:
       - backend
     networks:
